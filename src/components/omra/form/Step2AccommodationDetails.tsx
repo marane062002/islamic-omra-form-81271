@@ -2,17 +2,16 @@ import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useForm } from '@/contexts/FormContext';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Hotel, Bed, Users, Baby } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Hotel, Bed, Users } from 'lucide-react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 
 interface TravelPartyData {
   adults: number;
   children: number;
-  infants: number;
   ages: number[];
 }
 
@@ -24,7 +23,7 @@ interface TravelPartyStepProps {
 const TravelPartyStep = ({ data, onChange }: TravelPartyStepProps) => {
   const { isRTL } = useLanguage();
 
-  const updateCount = (type: 'adults' | 'children' | 'infants', increment: boolean) => {
+  const updateCount = (type: 'adults' | 'children', increment: boolean) => {
     const currentValue = data[type];
     const newValue = increment ? currentValue + 1 : Math.max(0, currentValue - 1);
     
@@ -39,8 +38,8 @@ const TravelPartyStep = ({ data, onChange }: TravelPartyStepProps) => {
     onChange({ ages: newAges });
   };
 
-  const totalTravelers = data.adults + data.children + data.infants;
-  const needAges = data.children + data.infants;
+  const totalTravelers = data.adults + data.children;
+  const needAges = data.children;
 
   return (
     <div className="space-y-6">
@@ -56,7 +55,7 @@ const TravelPartyStep = ({ data, onChange }: TravelPartyStepProps) => {
                 {isRTL ? 'بالغين' : 'Adults'}
               </h4>
               <p className={`text-sm text-muted-foreground ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-                {isRTL ? 'العمر 12 سنة فما فوق' : 'Age 12 years and above'}
+                {isRTL ? 'العمر 18 سنة فما فوق' : 'Age 18 years and above'}
               </p>
             </div>
           </div>
@@ -98,7 +97,7 @@ const TravelPartyStep = ({ data, onChange }: TravelPartyStepProps) => {
                 {isRTL ? 'أطفال' : 'Children'}
               </h4>
               <p className={`text-sm text-muted-foreground ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-                {isRTL ? 'العمر 2-11 سنة' : 'Age 2-11 years'}
+                {isRTL ? 'العمر 0-17 سنة' : 'Age 0-17 years'}
               </p>
             </div>
           </div>
@@ -128,88 +127,37 @@ const TravelPartyStep = ({ data, onChange }: TravelPartyStepProps) => {
         </div>
       </Card>
 
-      {/* Infants */}
-      <Card className="p-6 group hover:shadow-lg transition-all duration-300 border-muted-foreground/20 hover:border-primary/30 bg-background/50 backdrop-blur-sm">
-        <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-          <div className={`flex items-center space-x-4 ${isRTL ? 'space-x-reverse' : ''}`}>
-            <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-full flex items-center justify-center shadow-md">
-              <Baby className="w-6 h-6 text-white" />
-            </div>
-            <div className={isRTL ? 'text-right' : 'text-left'}>
-              <h4 className={`font-semibold text-lg text-foreground ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-                {isRTL ? 'رضع' : 'Infants'}
-              </h4>
-              <p className={`text-sm text-muted-foreground ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-                {isRTL ? 'تحت سن سنتين' : 'Under 2 years'}
-              </p>
-            </div>
-          </div>
-          <div className={`flex items-center space-x-4 ${isRTL ? 'space-x-reverse' : ''}`}>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => updateCount('infants', false)}
-              disabled={data.infants <= 0}
-              className="h-10 w-10 rounded-full hover:bg-pink-500/10 transition-colors"
-            >
-              <FaMinus className="w-3 h-3" />
-            </Button>
-            <span className="text-2xl font-bold w-12 text-center text-pink-600">
-              {data.infants}
-            </span>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => updateCount('infants', true)}
-              disabled={data.infants >= 4}
-              className="h-10 w-10 rounded-full hover:bg-pink-500/10 transition-colors"
-            >
-              <FaPlus className="w-3 h-3" />
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      {/* Ages for children and infants */}
+      {/* Ages for children */}
       {needAges > 0 && (
         <Card className="p-6 bg-gradient-to-br from-background/80 to-muted/20 border-dashed border-2 border-muted-foreground/30">
           <h4 className={`font-semibold text-lg mb-6 text-foreground ${isRTL ? 'font-amiri text-right' : 'font-inter text-left'}`}>
-            {isRTL ? 'أعمار الأطفال والرضع' : 'Children and Infants Ages'}
+            {isRTL ? 'أعمار الأطفال' : 'Children Ages'}
           </h4>
           <div className="grid md:grid-cols-3 gap-4">
-            {Array.from({ length: needAges }).map((_, index) => {
-              const isChild = index < data.children;
-              return (
-                <div key={index} className="relative group">
-                  <Input
-                    id={`age-${index}`}
-                    type="number"
-                    min="0"
-                    max={isChild ? "11" : "2"}
-                    value={data.ages[index] || ''}
-                    onChange={(e) => updateAge(index, parseInt(e.target.value) || 0)}
-                    placeholder={isChild ? 
-                      (isRTL ? `طفل ${index + 1}` : `Child ${index + 1}`) : 
-                      (isRTL ? `رضيع ${index + 1}` : `Infant ${index + 1}`)
-                    }
-                    className={`h-12 transition-all duration-300 border-muted-foreground/20 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 bg-background/50 backdrop-blur-sm ${
-                      isRTL ? 'text-right' : ''
-                    }`}
-                  />
-                  <Label 
-                    htmlFor={`age-${index}`}
-                    className={`absolute -top-2 bg-background px-2 text-sm font-medium text-muted-foreground transition-all duration-200 ${
-                      isRTL ? 'right-3 font-amiri' : 'left-3 font-inter'
-                    }`}
-                  >
-                    {isChild ? 
-                      (isRTL ? `طفل ${index + 1}` : `Child ${index + 1}`) : 
-                      (isRTL ? `رضيع ${index + 1}` : `Infant ${index + 1}`)
-                    } {isRTL ? 'العمر' : 'Age'}
-                  </Label>
-                </div>
-              );
-            })}
+            {Array.from({ length: needAges }).map((_, index) => (
+              <div key={index} className="relative group">
+                <Input
+                  id={`age-${index}`}
+                  type="number"
+                  min="0"
+                  max="17"
+                  value={data.ages[index] || ''}
+                  onChange={(e) => updateAge(index, parseInt(e.target.value) || 0)}
+                  placeholder={isRTL ? `طفل ${index + 1}` : `Child ${index + 1}`}
+                  className={`h-12 transition-all duration-300 border-muted-foreground/20 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 bg-background/50 backdrop-blur-sm ${
+                    isRTL ? 'text-right' : ''
+                  }`}
+                />
+                <Label 
+                  htmlFor={`age-${index}`}
+                  className={`absolute -top-2 bg-background px-2 text-sm font-medium text-muted-foreground transition-all duration-200 ${
+                    isRTL ? 'right-3 font-amiri' : 'left-3 font-inter'
+                  }`}
+                >
+                  {isRTL ? `طفل ${index + 1}` : `Child ${index + 1}`} {isRTL ? 'العمر' : 'Age'}
+                </Label>
+              </div>
+            ))}
           </div>
         </Card>
       )}
@@ -225,7 +173,7 @@ const TravelPartyStep = ({ data, onChange }: TravelPartyStepProps) => {
             {totalTravelers} {isRTL ? 'مسافر' : 'travelers'}
           </p>
           <p className={`text-muted-foreground ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-            {data.adults} {isRTL ? 'بالغ' : 'adults'}, {data.children} {isRTL ? 'طفل' : 'children'}, {data.infants} {isRTL ? 'رضيع' : 'infants'}
+            {data.adults} {isRTL ? 'بالغ' : 'adults'}, {data.children} {isRTL ? 'طفل' : 'children'}
           </p>
         </div>
       </div>
@@ -237,8 +185,8 @@ export const Step2AccommodationDetails: React.FC = () => {
   const { isRTL } = useLanguage();
   const { formData, updateFormData, errors } = useForm();
 
-  const handleHotelCategoryChange = (value: string) => {
-    updateFormData({ hotelCategory: value });
+  const handleHotelCategoryChange = (category: string) => {
+    updateFormData({ hotelCategory: category });
   };
 
   const handleRoomCountChange = (count: number) => {
@@ -247,14 +195,37 @@ export const Step2AccommodationDetails: React.FC = () => {
   };
 
   const handleTravelPartyChange = (data: Partial<TravelPartyData>) => {
-    const currentTravelParty = formData.travelParty || { adults: 1, children: 0, infants: 0, ages: [] };
+    const currentTravelParty = formData.travelParty || { adults: 1, children: 0, ages: [] };
     const updatedTravelParty = { ...currentTravelParty, ...data };
     updateFormData({ travelParty: updatedTravelParty });
   };
 
-  // Calculate total guests from travel party
-  const travelParty = formData.travelParty || { adults: 1, children: 0, infants: 0, ages: [] };
-  const totalGuests = travelParty.adults + travelParty.children + travelParty.infants;
+  const travelParty = formData.travelParty || { adults: 1, children: 0, ages: [] };
+
+  // Hotel categories with star emojis
+  const hotelCategories = [
+    { 
+      value: '4-star', 
+      labelEn: '4 ⭐ Hotels', 
+      labelAr: '4 ⭐ فنادق',
+      descriptionEn: 'Comfortable and reliable accommodation',
+      descriptionAr: 'إقامة مريحة وموثوقة'
+    },
+    { 
+      value: '5-star', 
+      labelEn: '5 ⭐ Hotels', 
+      labelAr: '5 ⭐ فنادق',
+      descriptionEn: 'Luxury experience with premium services',
+      descriptionAr: 'تجربة فاخرة مع خدمات مميزة'
+    },
+    { 
+      value: 'deluxe', 
+      labelEn: '5 ⭐ Deluxe', 
+      labelAr: '5 ⭐ ديلوكس',
+      descriptionEn: 'Ultimate luxury and exclusive services',
+      descriptionAr: 'أقصى درجات الفخامة والخدمات الحصرية'
+    }
+  ];
 
   return (
     <div className={`space-y-8 ${isRTL ? 'rtl text-right' : 'ltr text-left'}`}>
@@ -287,36 +258,63 @@ export const Step2AccommodationDetails: React.FC = () => {
           />
         </div>
 
-        {/* Hotel Category */}
-        <div className="space-y-2">
-          <Label htmlFor="hotelCategory" className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+        {/* Hotel Category - Checkboxes */}
+        <div className="space-y-4">
+          <Label className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
             <Hotel className="w-4 h-4 text-islamic-green" />
             <span className={isRTL ? 'font-amiri' : 'font-inter'}>
               {isRTL ? 'فئة الفندق' : 'Hotel Category'} *
             </span>
           </Label>
-          <Select 
-            value={formData.hotelCategory || ''} 
-            onValueChange={handleHotelCategoryChange}
-          >
-            <SelectTrigger className="h-12">
-              <SelectValue placeholder={isRTL ? 'اختر فئة الفندق' : 'Select hotel category'} />
-            </SelectTrigger>
-            <SelectContent>
-              {/* <SelectItem value="3-star">
-                {isRTL ? '3 نجوم' : '3-Star Hotels'}
-              </SelectItem> */}
-              <SelectItem value="4-star">
-                {isRTL ? '4 نجوم' : '4-Star Hotels'}
-              </SelectItem>
-              <SelectItem value="5-star">
-                {isRTL ? '5 نجوم' : '5-Star Hotels'}
-              </SelectItem>
-              <SelectItem value="deluxe">
-                {isRTL ? '5 نجوم ديلوكس' : '5-Star Deluxe'}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          
+          <div className="space-y-3">
+            {hotelCategories.map((category) => {
+              const isSelected = formData.hotelCategory === category.value;
+              
+              return (
+                <div
+                  key={category.value}
+                  className={`group relative overflow-hidden rounded-lg border-2 transition-all duration-300 cursor-pointer ${
+                    isSelected
+                      ? 'border-islamic-green bg-islamic-green/5 shadow-md shadow-islamic-green/10'
+                      : 'border-muted-foreground/20 bg-card hover:border-islamic-green/50'
+                  }`}
+                  onClick={() => handleHotelCategoryChange(category.value)}
+                >
+                  <div className="p-4">
+                    <div className={`flex items-start space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                      <Checkbox
+                        id={category.value}
+                        checked={isSelected}
+                        onCheckedChange={() => handleHotelCategoryChange(category.value)}
+                        className="mt-1 data-[state=checked]:bg-islamic-green data-[state=checked]:border-islamic-green"
+                      />
+                      <div className="flex-1">
+                        <Label
+                          htmlFor={category.value}
+                          className={`cursor-pointer font-semibold text-lg transition-colors ${
+                            isSelected ? 'text-islamic-green-dark' : 'text-foreground'
+                          } ${isRTL ? 'font-amiri' : 'font-inter'}`}
+                        >
+                          {isRTL ? category.labelAr : category.labelEn}
+                        </Label>
+                        <p className={`text-sm text-muted-foreground mt-1 ${
+                          isRTL ? 'font-amiri' : 'font-inter'
+                        }`}>
+                          {isRTL ? category.descriptionAr : category.descriptionEn}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {isSelected && (
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-islamic-green/0 via-islamic-green/5 to-islamic-green/0 animate-pulse" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          
           {errors.hotelCategory && (
             <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>
               {errors.hotelCategory}
@@ -338,14 +336,14 @@ export const Step2AccommodationDetails: React.FC = () => {
               <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className="w-10 h-10 bg-islamic-green/10 rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-islamic-green" />
+                    <Bed className="w-5 h-5 text-islamic-green" />
                   </div>
                   <div>
                     <Label className={`font-medium text-foreground ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-                      {isRTL ? 'إجمالي الضيوف' : 'Total Guests'}
+                      {isRTL ? 'الغرف المطلوبة' : 'Rooms Required'}
                     </Label>
                     <p className={`text-sm text-muted-foreground ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-                      {totalGuests} {isRTL ? 'ضيف' : 'guests'}
+                      {isRTL ? 'اختر عدد الغرف المناسب' : 'Select the number of rooms needed'}
                     </p>
                   </div>
                 </div>
@@ -356,7 +354,7 @@ export const Step2AccommodationDetails: React.FC = () => {
                   }`}
                 >
                   <Label className={`text-sm text-muted-foreground whitespace-nowrap ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-                    {isRTL ? 'عدد الغرف:' : 'Rooms:'}
+                    {isRTL ? 'العدد:' : 'Quantity:'}
                   </Label>
                   <div className="flex items-center space-x-2">
                     <button
@@ -386,20 +384,6 @@ export const Step2AccommodationDetails: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
-              {/* Room recommendation hint */}
-              {totalGuests > 0 && (
-                <div className={`mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200 ${
-                  isRTL ? 'text-right' : 'text-left'
-                }`}>
-                  <p className={`text-sm text-blue-700 ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-                    {isRTL 
-                      ? `مقترح: ${Math.ceil(totalGuests / 2)} غرفة (غرفتان لكل ${Math.ceil(totalGuests / 2)} ضيوف)`
-                      : `Suggested: ${Math.ceil(totalGuests / 2)} rooms (2 guests per room)`
-                    }
-                  </p>
-                </div>
-              )}
             </div>
           </div>
           
