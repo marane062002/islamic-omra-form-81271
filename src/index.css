@@ -1,0 +1,500 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Islamic-inspired design system for Omra trip organization */
+
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap');
+
+@layer base {
+  :root {
+    /* Islamic Color Palette */
+    --background: 45 20% 98%;
+    --foreground: 160 15% 15%;
+
+    /* Islamic Green Variations */
+    --islamic-green: 152 55% 25%;
+    --islamic-green-light: 152 45% 35%;
+    --islamic-green-lighter: 152 35% 85%;
+    --islamic-green-dark: 152 65% 15%;
+
+    /* Gold & Beige Accents */
+    --islamic-gold: 45 85% 55%;
+    --islamic-gold-light: 45 75% 75%;
+    --islamic-gold-dark: 45 95% 35%;
+    --islamic-beige: 45 25% 90%;
+    --islamic-beige-dark: 45 20% 80%;
+
+    /* Sacred White & Cream */
+    --sacred-white: 0 0% 100%;
+    --sacred-cream: 45 15% 96%;
+    --sacred-cream-dark: 45 12% 92%;
+
+    /* Card System */
+    --card: 0 0% 100%;
+    --card-foreground: 160 15% 15%;
+    --card-sacred: 45 15% 96%;
+    --card-islamic: 152 35% 95%;
+
+    /* Primary Islamic Green */
+    --primary: 152 55% 25%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 152 45% 35%;
+    --primary-lighter: 152 25% 85%;
+
+    /* Secondary Gold */
+    --secondary: 45 85% 55%;
+    --secondary-foreground: 160 15% 15%;
+    --secondary-light: 45 75% 75%;
+
+    /* Accent Beige */
+    --accent: 45 25% 90%;
+    --accent-foreground: 160 15% 15%;
+    --accent-dark: 45 20% 80%;
+
+    /* Muted Tones */
+    --muted: 45 15% 96%;
+    --muted-foreground: 160 8% 45%;
+    --muted-dark: 45 12% 88%;
+
+    /* Borders & Inputs */
+    --border: 45 20% 88%;
+    --input: 45 15% 96%;
+    --input-border: 152 25% 75%;
+    --ring: 152 55% 25%;
+
+    /* Destructive (keep minimal) */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Border Radius */
+    --radius: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 15% 15%;
+  }
+
+  .dark {
+    /* Simplified dark theme for Islamic context */
+    --background: 160 15% 10%;
+    --foreground: 45 15% 95%;
+    --card: 160 15% 12%;
+    --card-foreground: 45 15% 95%;
+    --primary: 152 45% 35%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 160 10% 15%;
+    --muted-foreground: 45 10% 70%;
+    --border: 160 10% 20%;
+    --input: 160 10% 15%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter;
+    background-image: 
+      radial-gradient(circle at 25% 25%, hsl(152, 55%, 25%, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, hsl(45, 85%, 55%, 0.02) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='hsl(152, 35%, 45%)' fill-opacity='0.03'%3E%3Cpath d='M40 40L20 20v40h40V20L40 40zM20 0h40v20L40 40 20 20V0z M0 20h20v20H0V20z M60 20h20v20H60V20z M0 60h20v20H0V60z M60 60h20v20H60V60z'/%3E%3C/g%3E%3C/svg%3E");
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  /* Islamic Typography */
+  .font-amiri {
+    font-family: 'Amiri', serif;
+  }
+  
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .font-playfair {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  /* Islamic Pattern Background */
+  .islamic-pattern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='hsl(152, 55%, 25%)' fill-opacity='0.05'%3E%3Cpath d='M30 30L15 15v30h30V15L30 30zM15 0h30v15L30 30 15 15V0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Islamic Geometric Ornament */
+  .islamic-ornament {
+    position: relative;
+  }
+  
+  .islamic-ornament::before,
+  .islamic-ornament::after {
+    content: '✦';
+    position: absolute;
+    color: hsl(45, 85%, 55%);
+    font-size: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .islamic-ornament::before {
+    left: -3rem;
+  }
+  
+  .islamic-ornament::after {
+    right: -3rem;
+  }
+
+  /* Hover Effects */
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px -10px hsl(152, 55%, 25%, 0.2);
+  }
+
+  /* Form Styling */
+  .form-step {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInFromBottom {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-in {
+    animation: slideInFromBottom 0.5s ease-out;
+  }
+  
+  .slide-in-from-bottom-4 {
+    animation: slideInFromBottom 0.5s ease-out;
+  }
+  
+  .duration-500 {
+    animation-duration: 0.5s;
+  }
+
+  /* Progress Bar */
+  .progress-step {
+    position: relative;
+  }
+  
+  .progress-step::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -50%;
+    width: 100%;
+    height: 2px;
+    background: hsl(45, 12%, 88%);
+    z-index: -1;
+  }
+  
+  .progress-step.completed::after {
+    background: linear-gradient(135deg, hsl(152, 55%, 25%) 0%, hsl(152, 45%, 35%) 100%);
+  }
+
+  /* Islamic Gradient Utilities */
+  .bg-gradient-islamic {
+    background: linear-gradient(135deg, hsl(152, 55%, 25%) 0%, hsl(152, 45%, 35%) 100%);
+  }
+
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, hsl(45, 95%, 35%) 0%, hsl(45, 85%, 55%) 100%);
+  }
+
+  .bg-gradient-sacred {
+    background: linear-gradient(180deg, hsl(45, 15%, 96%) 0%, hsl(0, 0%, 100%) 100%);
+  }
+
+  .bg-gradient-hero {
+    background: linear-gradient(135deg, hsl(152, 65%, 15%, 0.9) 0%, hsl(152, 55%, 25%, 0.8) 100%);
+  }
+
+  /* Custom Underline Input Styling */
+  .input-underline {
+    @apply bg-transparent border-0 border-b-2 border-muted-dark rounded-none px-0 py-4 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-islamic-green transition-all duration-300 ease-in-out text-base;
+    box-shadow: none !important;
+    min-height: 3rem;
+  }
+  
+  .input-underline:focus {
+    @apply border-islamic-green;
+    box-shadow: 0 3px 0 0 hsl(152, 55%, 25%) !important;
+    transform: translateY(-1px);
+  }
+  
+  .input-underline::placeholder {
+    @apply text-muted-foreground/60 transition-colors duration-300;
+  }
+  
+  .input-underline:focus::placeholder {
+    @apply text-muted-foreground/40;
+  }
+
+  /* Floating Label Effect */
+  .input-group {
+    @apply relative;
+  }
+  
+  .input-group .floating-label {
+    @apply absolute left-0 top-4 text-muted-foreground transition-all duration-300 ease-in-out pointer-events-none;
+    transform-origin: left center;
+  }
+  
+  .input-group .input-underline:focus ~ .floating-label,
+  .input-group .input-underline:not(:placeholder-shown) ~ .floating-label {
+    @apply text-islamic-green text-sm font-medium;
+    transform: translateY(-1.8rem) scale(0.85);
+  }
+
+  /* Enhanced Islamic Pattern */
+  .islamic-pattern-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='hsl(152, 55%, 25%)' stroke-width='0.5' stroke-opacity='0.08'%3E%3Cpath d='M60 60L30 30v60h60V30L60 60z M30 0h60v30L60 60 30 30V0z M0 30h30v30H0V30z M90 30h30v30H90V30z M0 90h30v30H0V90z M90 90h30v30H90V90z'/%3E%3Ccircle cx='60' cy='60' r='20'/%3E%3Cpath d='M40 40l20 20M80 40l-20 20M40 80l20-20M80 80l-20-20'/%3E%3C/g%3E%3C/svg%3E"),
+      radial-gradient(circle at 20% 20%, hsl(152, 35%, 85%, 0.1) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, hsl(45, 85%, 75%, 0.1) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+@layer components {
+  /* Enhanced Islamic geometric pattern background */
+  .islamic-pattern {
+    background-image: 
+      radial-gradient(circle at 25% 25%, hsl(var(--islamic-green) / 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, hsl(var(--islamic-gold) / 0.08) 0%, transparent 50%),
+      linear-gradient(45deg, transparent 24%, hsl(var(--islamic-green) / 0.03) 25%, hsl(var(--islamic-green) / 0.03) 26%, transparent 27%, transparent 74%, hsl(var(--islamic-green) / 0.03) 75%, hsl(var(--islamic-green) / 0.03) 76%, transparent 77%),
+      linear-gradient(-45deg, transparent 24%, hsl(var(--islamic-gold) / 0.03) 25%, hsl(var(--islamic-gold) / 0.03) 26%, transparent 27%, transparent 74%, hsl(var(--islamic-gold) / 0.03) 75%, hsl(var(--islamic-gold) / 0.03) 76%, transparent 77%);
+    background-size: 60px 60px, 60px 60px, 40px 40px, 40px 40px;
+    background-position: 0 0, 30px 30px, 0 0, 20px 20px;
+  }
+
+  /* RTL Support Classes */
+  .rtl-grid {
+    direction: rtl;
+  }
+  
+  .rtl-grid .md\:grid-cols-2 > * {
+    text-align: right;
+  }
+
+  /* Enhanced stepper styling */
+  .stepper-container {
+    @apply relative;
+  }
+
+  .stepper-container::before {
+    content: '';
+    @apply absolute top-6 left-6 right-6 h-0.5 bg-gradient-to-r from-muted via-islamic-green/30 to-muted;
+    z-index: 0;
+  }
+
+  .stepper-step {
+    @apply relative z-10 bg-card;
+  }
+
+  /* Enhanced form styling */
+  .form-input-floating {
+    @apply relative;
+  }
+
+  .form-input-floating input:focus + label,
+  .form-input-floating input:not(:placeholder-shown) + label {
+    @apply text-xs -top-2 text-islamic-green;
+  }
+
+  .form-input-floating input {
+    width: 100%;
+    padding: 12px 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid hsl(var(--muted-foreground) / 0.3);
+    color: hsl(var(--foreground));
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .form-input-floating input::placeholder {
+    color: transparent;
+  }
+
+  .form-input-floating input:focus {
+    border-bottom-color: hsl(var(--islamic-green));
+  }
+
+  .form-input-floating label {
+    @apply absolute transition-all duration-300 text-muted-foreground;
+    top: 12px;
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  .form-input-floating input:focus + label,
+  .form-input-floating input:not([value=""]) + label {
+    @apply text-xs -top-2 text-islamic-green;
+  }
+
+  /* RTL specific form styling */
+  .rtl .form-input-floating input {
+    @apply text-right font-amiri;
+  }
+
+  .rtl .form-input-floating label {
+    @apply right-0 font-amiri;
+  }
+
+  .ltr .form-input-floating input {
+    @apply text-left font-inter;
+  }
+
+  .ltr .form-input-floating label {
+    @apply left-0 font-inter;
+  }
+
+  /* Hero section styling */
+  .hero-overlay {
+    background: var(--gradient-hero);
+  }
+
+  /* Custom button variants */
+  .btn-islamic {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl;
+    background: var(--gradient-islamic);
+    transition: all 0.3s ease;
+  }
+
+  .btn-islamic:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-islamic);
+  }
+
+  .btn-gold {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90;
+    transition: all 0.3s ease;
+  }
+
+  .btn-gold:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-gold);
+  }
+
+  /* Form step indicator */
+  .step-indicator {
+    @apply flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm font-semibold;
+  }
+
+  .step-active {
+    @apply bg-primary text-primary-foreground border-primary;
+  }
+
+  .step-completed {
+    @apply bg-accent text-accent-foreground border-accent;
+  }
+
+  .step-inactive {
+    @apply bg-muted text-muted-foreground border-muted-foreground/30;
+  }
+
+  /* Form card styling */
+  .form-card {
+    @apply bg-card p-6 rounded-lg shadow-lg border border-border/50;
+    box-shadow: var(--shadow-islamic);
+  }
+
+  /* Arabic text styling */
+  .arabic-text {
+    font-family: var(--font-arabic);
+    direction: rtl;
+    text-align: right;
+  }
+
+  /* Custom animations */
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .slide-in-right {
+    animation: slideInRight 0.5s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Islamic decorative elements */
+  .decorative-border {
+    position: relative;
+  }
+
+  .decorative-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--gradient-islamic);
+    border-radius: 2px;
+  }
+}
