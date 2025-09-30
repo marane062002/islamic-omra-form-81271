@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FileText, User, Hotel, Calendar, Loader2 } from 'lucide-react';
+import { FileText, User, Hotel, Calendar, Users, Bed, Loader2 } from 'lucide-react';
 
 interface Step4ReviewProps {
   onSubmit: () => void;
@@ -29,6 +29,30 @@ export const Step4Review: React.FC<Step4ReviewProps> = ({ onSubmit }) => {
     await onSubmit();
     setIsSubmitting(false);
   };
+
+  // Format month display for flexible dates
+  const formatMonthDisplay = (monthValue: string) => {
+    if (!monthValue) return '';
+    
+    const [year, month] = monthValue.split('-');
+    const monthNamesEn = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const monthNamesAr = [
+      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+    ];
+    
+    const monthIndex = parseInt(month) - 1;
+    return isRTL 
+      ? `${monthNamesAr[monthIndex]} ${year}`
+      : `${monthNamesEn[monthIndex]} ${year}`;
+  };
+
+  // Get travel party data
+  const travelParty = formData.travelParty || { adults: 1, children: 0, infants: 0, ages: [] };
+  const totalGuests = travelParty.adults + travelParty.children + travelParty.infants;
 
   return (
     <div className={`space-y-8 ${isRTL ? 'rtl text-right' : 'ltr text-left'}`}>
@@ -68,6 +92,69 @@ export const Step4Review: React.FC<Step4ReviewProps> = ({ onSubmit }) => {
           </div>
         </Card>
 
+        {/* Travel Party */}
+        <Card className="p-6">
+          <div className={`flex items-center mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Users className="w-5 h-5 text-islamic-green mr-2" />
+            <h4 className={`font-semibold text-lg ${isRTL ? 'font-amiri' : 'font-inter'}`}>
+              {isRTL ? 'تفاصيل المسافرين' : 'Travel Party Details'}
+            </h4>
+          </div>
+          <div className="space-y-4 text-sm">
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                <span className="font-medium block text-blue-700">
+                  {isRTL ? 'بالغين' : 'Adults'}
+                </span>
+                <span className="text-lg font-bold text-blue-800">
+                  {travelParty.adults}
+                </span>
+              </div>
+              <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
+                <span className="font-medium block text-yellow-700">
+                  {isRTL ? 'أطفال' : 'Children'}
+                </span>
+                <span className="text-lg font-bold text-yellow-800">
+                  {travelParty.children}
+                </span>
+              </div>
+              <div className="bg-pink-50 rounded-lg p-3 border border-pink-200">
+                <span className="font-medium block text-pink-700">
+                  {isRTL ? 'رضع' : 'Infants'}
+                </span>
+                <span className="text-lg font-bold text-pink-800">
+                  {travelParty.infants}
+                </span>
+              </div>
+            </div>
+            
+            {/* Display ages if available */}
+            {(travelParty.children > 0 || travelParty.infants > 0) && travelParty.ages && travelParty.ages.length > 0 && (
+              <div className="mt-4">
+                <span className="font-medium block mb-2">
+                  {isRTL ? 'أعمار الأطفال والرضع:' : 'Children and Infants Ages:'}
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {travelParty.ages.map((age, index) => (
+                    <div key={index} className="bg-islamic-green/10 rounded-lg px-3 py-1 border border-islamic-green/20">
+                      {isRTL ? `عمر ${index + 1}:` : `Age ${index + 1}:`} {age} {isRTL ? 'سنة' : 'years'}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <div className="pt-4 border-t border-gray-200">
+              <span className="font-medium">
+                {isRTL ? 'إجمالي المسافرين:' : 'Total Travelers:'}
+              </span>{' '}
+              <span className="text-lg font-bold text-islamic-green">
+                {totalGuests} {isRTL ? 'مسافر' : 'travelers'}
+              </span>
+            </div>
+          </div>
+        </Card>
+
         {/* Accommodation */}
         <Card className="p-6">
           <div className={`flex items-center mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -78,16 +165,24 @@ export const Step4Review: React.FC<Step4ReviewProps> = ({ onSubmit }) => {
           </div>
           <div className="space-y-4 text-sm">
             <div>
-              <span className="font-medium">{isRTL ? 'فئة الفندق:' : 'Hotel Category:'}</span> {formData.hotelCategory}
+              <span className="font-medium">{isRTL ? 'فئة الفندق:' : 'Hotel Category:'}</span>{' '}
+              <span className="capitalize">
+                {formData.hotelCategory === '3-star' && (isRTL ? '3 نجوم' : '3-Star Hotels')}
+                {formData.hotelCategory === '4-star' && (isRTL ? '4 نجوم' : '4-Star Hotels')}
+                {formData.hotelCategory === '5-star' && (isRTL ? '5 نجوم' : '5-Star Hotels')}
+                {formData.hotelCategory === 'deluxe' && (isRTL ? '5 نجوم ديلوكس' : '5-Star Deluxe')}
+              </span>
             </div>
             <div>
-              <span className="font-medium block mb-2">{isRTL ? 'الغرف المحددة:' : 'Selected Rooms:'}</span>
-              <div className="grid md:grid-cols-2 gap-2">
-                {Object.entries(formData.roomSelections || {}).map(([roomType, count]) => (
-                  <div key={roomType} className="bg-islamic-green/10 rounded-lg p-3 border border-islamic-green/20">
-                    <span className="font-medium capitalize">{roomType.replace('-', ' ')}:</span> {count} {isRTL ? 'غرفة' : 'room(s)'}
-                  </div>
-                ))}
+              <span className="font-medium block mb-2">{isRTL ? 'عدد الغرف:' : 'Number of Rooms:'}</span>
+              <div className="flex items-center space-x-2 bg-islamic-green/10 rounded-lg p-3 border border-islamic-green/20">
+                <Bed className="w-4 h-4 text-islamic-green" />
+                <span className="font-bold text-lg text-islamic-green">
+                  {formData.numberOfRooms || 1}
+                </span>
+                <span className="text-muted-foreground">
+                  {isRTL ? 'غرفة' : 'room(s)'}
+                </span>
               </div>
             </div>
           </div>
@@ -111,15 +206,18 @@ export const Step4Review: React.FC<Step4ReviewProps> = ({ onSubmit }) => {
             </div>
             {formData.dateType === 'flexible' ? (
               <div>
-                <span className="font-medium">{isRTL ? 'الشهر:' : 'Month:'}</span> {formData.flexibleMonth}
+                <span className="font-medium">{isRTL ? 'الشهر:' : 'Month:'}</span>{' '}
+                {formatMonthDisplay(formData.flexibleMonth)}
               </div>
             ) : (
               <>
                 <div>
-                  <span className="font-medium">{isRTL ? 'تاريخ المغادرة:' : 'Departure Date:'}</span> {formData.departureDate}
+                  <span className="font-medium">{isRTL ? 'تاريخ المغادرة:' : 'Departure Date:'}</span>{' '}
+                  {formData.departureDate}
                 </div>
                 <div>
-                  <span className="font-medium">{isRTL ? 'تاريخ العودة:' : 'Return Date:'}</span> {formData.returnDate}
+                  <span className="font-medium">{isRTL ? 'تاريخ العودة:' : 'Return Date:'}</span>{' '}
+                  {formData.returnDate}
                 </div>
               </>
             )}
@@ -140,7 +238,7 @@ export const Step4Review: React.FC<Step4ReviewProps> = ({ onSubmit }) => {
             </Label>
             <Textarea
               id="specialRequests"
-              value={formData.specialRequests}
+              value={formData.specialRequests || ''}
               onChange={(e) => handleSpecialRequestsChange(e.target.value)}
               placeholder={isRTL 
                 ? 'يرجى مشاركة أي احتياجات خاصة أو طلبات إضافية...'
