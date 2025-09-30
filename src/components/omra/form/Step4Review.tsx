@@ -76,15 +76,19 @@ export const Step4Review: React.FC<Step4ReviewProps> = ({ onSubmit }) => {
               {isRTL ? 'الإقامة' : 'Accommodation'}
             </h4>
           </div>
-          <div className="grid md:grid-cols-2 gap-4 text-sm">
+          <div className="space-y-4 text-sm">
             <div>
               <span className="font-medium">{isRTL ? 'فئة الفندق:' : 'Hotel Category:'}</span> {formData.hotelCategory}
             </div>
             <div>
-              <span className="font-medium">{isRTL ? 'نوع الغرفة:' : 'Room Type:'}</span> {formData.roomType}
-            </div>
-            <div>
-              <span className="font-medium">{isRTL ? 'عدد الغرف:' : 'Number of Rooms:'}</span> {formData.numberOfRooms}
+              <span className="font-medium block mb-2">{isRTL ? 'الغرف المحددة:' : 'Selected Rooms:'}</span>
+              <div className="grid md:grid-cols-2 gap-2">
+                {Object.entries(formData.roomSelections || {}).map(([roomType, count]) => (
+                  <div key={roomType} className="bg-islamic-green/10 rounded-lg p-3 border border-islamic-green/20">
+                    <span className="font-medium capitalize">{roomType.replace('-', ' ')}:</span> {count} {isRTL ? 'غرفة' : 'room(s)'}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </Card>

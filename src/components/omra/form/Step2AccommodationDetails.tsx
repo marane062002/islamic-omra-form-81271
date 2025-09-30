@@ -4,14 +4,39 @@ import { useForm } from '@/contexts/FormContext';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Hotel, Bed, Hash } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Hotel, Bed } from 'lucide-react';
+
+const roomTypes = [
+  { value: 'single', labelEn: 'Single Room', labelAr: 'غرفة فردية' },
+  { value: 'double', labelEn: 'Double Room', labelAr: 'غرفة مزدوجة' },
+  { value: 'triple', labelEn: 'Triple Room', labelAr: 'غرفة ثلاثية' },
+  { value: 'quad', labelEn: 'Quad Room', labelAr: 'غرفة رباعية' },
+  { value: 'family', labelEn: 'Family Suite', labelAr: 'جناح عائلي' },
+];
 
 export const Step2AccommodationDetails: React.FC = () => {
   const { t, isRTL } = useLanguage();
   const { formData, updateFormData, errors } = useForm();
 
-  const handleInputChange = (field: string, value: string | number) => {
-    updateFormData({ [field]: value });
+  const handleHotelCategoryChange = (value: string) => {
+    updateFormData({ hotelCategory: value });
+  };
+
+  const handleRoomToggle = (roomType: string, checked: boolean) => {
+    const currentSelections = { ...formData.roomSelections };
+    if (checked) {
+      currentSelections[roomType] = 1;
+    } else {
+      delete currentSelections[roomType];
+    }
+    updateFormData({ roomSelections: currentSelections });
+  };
+
+  const handleRoomCountChange = (roomType: string, count: number) => {
+    const currentSelections = { ...formData.roomSelections };
+    currentSelections[roomType] = Math.max(1, count);
+    updateFormData({ roomSelections: currentSelections });
   };
 
   return (
@@ -30,7 +55,7 @@ export const Step2AccommodationDetails: React.FC = () => {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="space-y-8">
         {/* Hotel Category */}
         <div className="space-y-2">
           <Label htmlFor="hotelCategory" className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
@@ -41,7 +66,7 @@ export const Step2AccommodationDetails: React.FC = () => {
           </Label>
           <Select 
             value={formData.hotelCategory || ''} 
-            onValueChange={(value) => handleInputChange('hotelCategory', value)}
+            onValueChange={handleHotelCategoryChange}
           >
             <SelectTrigger className="h-12">
               <SelectValue placeholder={isRTL ? 'اختر فئة الفندق' : 'Select hotel category'} />
@@ -68,66 +93,99 @@ export const Step2AccommodationDetails: React.FC = () => {
           )}
         </div>
 
-        {/* Room Type */}
-        <div className="space-y-2">
-          <Label htmlFor="roomType" className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+        {/* Room Types */}
+        <div className="space-y-4">
+          <Label className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
             <Bed className="w-4 h-4 text-islamic-green" />
             <span className={isRTL ? 'font-amiri' : 'font-inter'}>
-              {isRTL ? 'نوع الغرفة' : 'Room Type'} *
+              {isRTL ? 'أنواع الغرف' : 'Room Types'} *
             </span>
           </Label>
-          <Select 
-            value={formData.roomType || ''} 
-            onValueChange={(value) => handleInputChange('roomType', value)}
-          >
-            <SelectTrigger className="h-12">
-              <SelectValue placeholder={isRTL ? 'اختر نوع الغرفة' : 'Select room type'} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="single">
-                {isRTL ? 'غرفة فردية' : 'Single Room'}
-              </SelectItem>
-              <SelectItem value="double">
-                {isRTL ? 'غرفة مزدوجة' : 'Double Room'}
-              </SelectItem>
-              <SelectItem value="triple">
-                {isRTL ? 'غرفة ثلاثية' : 'Triple Room'}
-              </SelectItem>
-              <SelectItem value="quad">
-                {isRTL ? 'غرفة رباعية' : 'Quad Room'}
-              </SelectItem>
-              <SelectItem value="family">
-                {isRTL ? 'جناح عائلي' : 'Family Suite'}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          {errors.roomType && (
+          
+          <div className="space-y-3">
+            {roomTypes.map((room) => {
+              const isSelected = formData.roomSelections?.[room.value] !== undefined;
+              const roomCount = formData.roomSelections?.[room.value] || 1;
+              
+              return (
+                <div
+                  key={room.value}
+                  className={`group relative overflow-hidden rounded-lg border-2 transition-all duration-300 ${
+                    isSelected
+                      ? 'border-islamic-green bg-islamic-green/5 shadow-md shadow-islamic-green/10'
+                      : 'border-muted-foreground/20 bg-card hover:border-islamic-green/50'
+                  }`}
+                >
+                  <div className="p-4">
+                    <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                        <Checkbox
+                          id={room.value}
+                          checked={isSelected}
+                          onCheckedChange={(checked) => handleRoomToggle(room.value, checked as boolean)}
+                          className="data-[state=checked]:bg-islamic-green data-[state=checked]:border-islamic-green"
+                        />
+                        <Label
+                          htmlFor={room.value}
+                          className={`cursor-pointer font-medium transition-colors ${
+                            isSelected ? 'text-islamic-green-dark' : 'text-foreground'
+                          } ${isRTL ? 'font-amiri' : 'font-inter'}`}
+                        >
+                          {isRTL ? room.labelAr : room.labelEn}
+                        </Label>
+                      </div>
+                      
+                      {isSelected && (
+                        <div 
+                          className={`flex items-center space-x-3 animate-in slide-in-from-right-5 duration-300 ${
+                            isRTL ? 'flex-row-reverse space-x-reverse' : ''
+                          }`}
+                        >
+                          <Label className={`text-sm text-muted-foreground whitespace-nowrap ${isRTL ? 'font-amiri' : 'font-inter'}`}>
+                            {isRTL ? 'العدد:' : 'Quantity:'}
+                          </Label>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              type="button"
+                              onClick={() => handleRoomCountChange(room.value, roomCount - 1)}
+                              className="w-8 h-8 rounded-md bg-islamic-green/10 hover:bg-islamic-green/20 text-islamic-green flex items-center justify-center transition-colors font-bold"
+                              disabled={roomCount <= 1}
+                            >
+                              -
+                            </button>
+                            <Input
+                              type="number"
+                              min="1"
+                              max="10"
+                              value={roomCount}
+                              onChange={(e) => handleRoomCountChange(room.value, parseInt(e.target.value) || 1)}
+                              className="w-16 h-8 text-center font-semibold border-islamic-green/30"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRoomCountChange(room.value, roomCount + 1)}
+                              className="w-8 h-8 rounded-md bg-islamic-green/10 hover:bg-islamic-green/20 text-islamic-green flex items-center justify-center transition-colors font-bold"
+                              disabled={roomCount >= 10}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {isSelected && (
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-islamic-green/0 via-islamic-green/5 to-islamic-green/0 animate-pulse" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          
+          {errors.roomSelections && (
             <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-              {errors.roomType}
-            </p>
-          )}
-        </div>
-
-        {/* Number of Rooms */}
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="numberOfRooms" className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-            <Hash className="w-4 h-4 text-islamic-green" />
-            <span className={isRTL ? 'font-amiri' : 'font-inter'}>
-              {isRTL ? 'عدد الغرف' : 'Number of Rooms'} *
-            </span>
-          </Label>
-          <Input
-            type="number"
-            id="numberOfRooms"
-            min="1"
-            max="10"
-            value={formData.numberOfRooms || 1}
-            onChange={(e) => handleInputChange('numberOfRooms', parseInt(e.target.value) || 1)}
-            className="h-12"
-          />
-          {errors.numberOfRooms && (
-            <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-              {errors.numberOfRooms}
+              {errors.roomSelections}
             </p>
           )}
         </div>

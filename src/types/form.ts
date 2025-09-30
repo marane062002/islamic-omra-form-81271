@@ -6,8 +6,9 @@ export interface FormData {
   
   // Accommodation Details (Step 2)
   hotelCategory: string;
-  roomType: string;
-  numberOfRooms: number;
+  roomSelections: {
+    [roomType: string]: number; // roomType -> number of rooms
+  };
   
   // Trip Preferences (Step 3)
   dateType: 'flexible' | 'specific';
@@ -24,8 +25,7 @@ export const initialFormData: FormData = {
   email: '',
   phone: '',
   hotelCategory: '',
-  roomType: '',
-  numberOfRooms: 1,
+  roomSelections: {},
   dateType: 'specific',
   flexibleMonth: '',
   departureDate: '',
