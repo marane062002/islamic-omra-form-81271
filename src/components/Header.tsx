@@ -33,12 +33,16 @@ export const Header: React.FC<HeaderProps> = ({ onNavigateToForm }) => {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-            <div className="text-islamic-gold text-3xl">☪</div>
+          <div className={`flex flex-col items-start ${isRTL ? 'items-end' : 'items-start'}`}>
             <span className={`text-xl font-bold text-islamic-green ${
+              isRTL ? 'font-amiri' : 'font-playfair'
+            }`}>
+              Omra Private Family
+            </span>
+            <span className={`text-sm text-islamic-gold ${
               isRTL ? 'font-amiri' : 'font-inter'
             }`}>
-              {isRTL ? 'رحلات العمرة' : 'Omra Journeys'}
+              mystictravel
             </span>
           </div>
 
@@ -56,13 +60,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigateToForm }) => {
               </button>
             ))}
             
-            <Button
-              onClick={onNavigateToForm}
-              variant="outline"
-              className="bg-islamic-green text-primary-foreground hover:bg-islamic-green-dark border-islamic-green hover:border-islamic-green-dark"
-            >
-              {t('hero.cta')}
-            </Button>
+            {/* FAB will be separate component, removed from header */}
             
             <LanguageSwitcher />
           </nav>
@@ -97,17 +95,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigateToForm }) => {
                 </button>
               ))}
               
-              <div className="px-4">
-                <Button
-                  onClick={() => {
-                    onNavigateToForm();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full bg-islamic-green text-primary-foreground hover:bg-islamic-green-dark"
-                >
-                  {t('hero.cta')}
-                </Button>
-              </div>
+              {/* FAB will be separate component */}
             </nav>
           </div>
         )}

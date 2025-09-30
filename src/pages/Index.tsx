@@ -5,7 +5,7 @@ import { AboutSection } from '@/components/omra/AboutSection';
 import { ProgramSection } from '@/components/omra/ProgramSection';
 import { OmraForm } from '@/components/omra/OmraForm';
 import { ContactSection } from '@/components/omra/ContactSection';
-import { OmraFormSteps } from '@/components/omra/OmraFormSteps';
+import { FloatingActionButton } from '@/components/FloatingActionButton';
 
 const Index = () => {
   const formRef = useRef<HTMLDivElement>(null);
@@ -35,11 +35,8 @@ const Index = () => {
         <ProgramSection onBookNowClick={scrollToForm} />
         
         {/* Omra Form */}
-        {/* <div ref={formRef}>
-          <OmraForm />
-        </div> */}
         <div ref={formRef}>
-          <OmraFormSteps />
+          <OmraForm />
         </div>
         
         {/* Contact Section */}
@@ -47,6 +44,9 @@ const Index = () => {
           <ContactSection />
         </section>
       </main>
+      
+      {/* Floating Action Button */}
+      <FloatingActionButton onClick={scrollToForm} />
     </div>
   );
 };

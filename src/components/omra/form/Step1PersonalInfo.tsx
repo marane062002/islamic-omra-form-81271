@@ -25,7 +25,7 @@ export const Step1PersonalInfo: React.FC = () => {
 
       <div className="grid md:grid-cols-2 gap-8">
         {/* Full Name */}
-        <div className="form-input-floating">
+        <div className="form-input-floating md:col-span-2">
           <input
             type="text"
             id="fullName"
@@ -74,40 +74,6 @@ export const Step1PersonalInfo: React.FC = () => {
             <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>{errors.phone}</p>
           )}
         </div>
-
-        {/* Passport Number */}
-        <div className="form-input-floating">
-          <input
-            type="text"
-            id="passportNumber"
-            value={formData.passportNumber}
-            onChange={(e) => handleInputChange('passportNumber', e.target.value)}
-            placeholder={t('form.passport')}
-          />
-          <label htmlFor="passportNumber">
-            {t('form.passport')} *
-          </label>
-          {errors.passportNumber && (
-            <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>{errors.passportNumber}</p>
-          )}
-        </div>
-
-        {/* Passport Expiry */}
-        <div className="form-input-floating md:col-span-2">
-          <input
-            type="date"
-            id="passportExpiry"
-            value={formData.passportExpiry}
-            onChange={(e) => handleInputChange('passportExpiry', e.target.value)}
-            placeholder={t('form.passport.expiry')}
-          />
-          <label htmlFor="passportExpiry">
-            {t('form.passport.expiry')} *
-          </label>
-          {errors.passportExpiry && (
-            <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>{errors.passportExpiry}</p>
-          )}
-        </div>
       </div>
 
       {/* Note Section */}
@@ -124,8 +90,8 @@ export const Step1PersonalInfo: React.FC = () => {
                 {isRTL ? 'ملاحظة:' : 'Note:'}
               </strong>{' '}
               {isRTL 
-                ? 'يرجى التأكد من أن جواز سفرك صالح لمدة 6 أشهر على الأقل من تاريخ السفر المقصود. يجب أن تطابق جميع المعلومات وثائقك الرسمية تماماً.'
-                : 'Please ensure your passport is valid for at least 6 months from your intended travel date. All information must match your official documents exactly.'
+                ? 'يرجى التأكد من صحة جميع المعلومات المقدمة. سيتم استخدام هذه البيانات للتواصل معك وترتيب رحلتك.'
+                : 'Please ensure all information provided is accurate. This data will be used to contact you and arrange your trip.'
               }
             </p>
           </div>

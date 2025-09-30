@@ -16,7 +16,7 @@ interface FormContextType {
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 4;
 
 export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [formData, setFormData] = useState<FormData>(initialFormData);

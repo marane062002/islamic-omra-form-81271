@@ -24,9 +24,9 @@ const programItems = [
   { key: 'program.flight', icon: Plane },
   { key: 'program.guidance', icon: Users },
   { key: 'program.passport', icon: FileText },
-  { key: 'program.payment', icon: CreditCard },
+  { key: 'program.payment', icon: CreditCard, customText: 'Easy payment' },
   { key: 'program.hotels', icon: Building2 },
-  { key: 'program.transport', icon: Bus },
+  { key: 'program.transport', icon: Bus, customText: 'Private transport' },
   { key: 'program.insurance', icon: Shield },
 ];
 
@@ -85,7 +85,7 @@ export const ProgramSection: React.FC<ProgramSectionProps> = ({ onBookNowClick }
                     <p className={`text-sm font-medium text-foreground leading-relaxed ${
                       isRTL ? 'font-amiri text-base text-right' : 'font-inter'
                     }`}>
-                      {t(item.key)}
+                      {'customText' in item ? item.customText : t(item.key)}
                     </p>
                   </CardContent>
                 </Card>
