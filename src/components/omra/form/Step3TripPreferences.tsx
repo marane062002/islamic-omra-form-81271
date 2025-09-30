@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useForm } from '@/contexts/FormContext';
 import { Input } from '@/components/ui/input';
@@ -24,20 +24,42 @@ export const Step3TripPreferences: React.FC = () => {
     updateFormData({ dateType: value });
   };
 
-  const months = [
-    { value: '2025-01', label: isRTL ? 'يناير 2025' : 'January 2025' },
-    { value: '2025-02', label: isRTL ? 'فبراير 2025' : 'February 2025' },
-    { value: '2025-03', label: isRTL ? 'مارس 2025' : 'March 2025' },
-    { value: '2025-04', label: isRTL ? 'أبريل 2025' : 'April 2025' },
-    { value: '2025-05', label: isRTL ? 'مايو 2025' : 'May 2025' },
-    { value: '2025-06', label: isRTL ? 'يونيو 2025' : 'June 2025' },
-    { value: '2025-07', label: isRTL ? 'يوليو 2025' : 'July 2025' },
-    { value: '2025-08', label: isRTL ? 'أغسطس 2025' : 'August 2025' },
-    { value: '2025-09', label: isRTL ? 'سبتمبر 2025' : 'September 2025' },
-    { value: '2025-10', label: isRTL ? 'أكتوبر 2025' : 'October 2025' },
-    { value: '2025-11', label: isRTL ? 'نوفمبر 2025' : 'November 2025' },
-    { value: '2025-12', label: isRTL ? 'ديسمبر 2025' : 'December 2025' },
-  ];
+  // Generate dynamic months - next 12 months from current month
+  const months = useMemo(() => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth(); // 0-indexed (0 = January)
+    
+    const monthNamesEn = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    const monthNamesAr = [
+      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+    ];
+
+    const generatedMonths = [];
+    
+    // Start from the next month
+    for (let i = 1; i <= 12; i++) {
+      const monthIndex = (currentMonth + i) % 12;
+      const year = currentYear + Math.floor((currentMonth + i) / 12);
+      
+      const monthValue = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
+      const monthLabel = isRTL 
+        ? `${monthNamesAr[monthIndex]} ${year}`
+        : `${monthNamesEn[monthIndex]} ${year}`;
+      
+      generatedMonths.push({
+        value: monthValue,
+        label: monthLabel
+      });
+    }
+    
+    return generatedMonths;
+  }, [isRTL]);
 
   return (
     <div className={`space-y-8 fade-in-up ${isRTL ? 'rtl text-right' : 'ltr text-left'}`}>
