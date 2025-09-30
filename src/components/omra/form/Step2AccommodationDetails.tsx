@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Hotel, Bed, Users, Child, Baby } from 'lucide-react';
+import { Hotel, Bed, Users, Baby } from 'lucide-react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 
 interface TravelPartyData {
@@ -91,7 +91,7 @@ const TravelPartyStep = ({ data, onChange }: TravelPartyStepProps) => {
         <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
           <div className={`flex items-center space-x-4 ${isRTL ? 'space-x-reverse' : ''}`}>
             <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center shadow-md">
-              <Child className="w-6 h-6 text-white" />
+              <Users className="w-6 h-6 text-white" />
             </div>
             <div className={isRTL ? 'text-right' : 'text-left'}>
               <h4 className={`font-semibold text-lg text-foreground ${isRTL ? 'font-amiri' : 'font-inter'}`}>
