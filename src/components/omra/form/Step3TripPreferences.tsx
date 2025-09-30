@@ -24,7 +24,7 @@ export const Step3TripPreferences: React.FC = () => {
     updateFormData({ dateType: value });
   };
 
-  // Generate dynamic months - next 12 months from current month
+  // Generate dynamic months - current month + next 12 months
   const months = useMemo(() => {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -42,8 +42,8 @@ export const Step3TripPreferences: React.FC = () => {
 
     const generatedMonths = [];
     
-    // Start from the next month
-    for (let i = 1; i <= 12; i++) {
+    // Start from current month (i = 0) and go up to 12 months ahead (i <= 12)
+    for (let i = 0; i <= 12; i++) {
       const monthIndex = (currentMonth + i) % 12;
       const year = currentYear + Math.floor((currentMonth + i) / 12);
       
@@ -52,9 +52,16 @@ export const Step3TripPreferences: React.FC = () => {
         ? `${monthNamesAr[monthIndex]} ${year}`
         : `${monthNamesEn[monthIndex]} ${year}`;
       
+      // Add current month indicator
+      const isCurrentMonth = i === 0;
+      const displayLabel = isCurrentMonth 
+        ? (isRTL ? `${monthLabel} (الحالي)` : `${monthLabel} (Current)`)
+        : monthLabel;
+      
       generatedMonths.push({
         value: monthValue,
-        label: monthLabel
+        label: displayLabel,
+        isCurrent: isCurrentMonth
       });
     }
     
@@ -119,7 +126,11 @@ export const Step3TripPreferences: React.FC = () => {
             </SelectTrigger>
             <SelectContent>
               {months.map((month) => (
-                <SelectItem key={month.value} value={month.value}>
+                <SelectItem 
+                  key={month.value} 
+                  value={month.value}
+                  className={month.isCurrent ? 'bg-islamic-green/10 font-semibold' : ''}
+                >
                   {month.label}
                 </SelectItem>
               ))}
