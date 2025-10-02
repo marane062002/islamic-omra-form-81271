@@ -114,7 +114,7 @@ const translations = {
     'form.step7.termsAccept': 'I acknowledge that I have reviewed all the information provided and agree to the Terms and Conditions and Privacy Policy. I understand that this is a request for quotation and that final pricing and availability will be confirmed by your team.',
     
     // Form Fields
-    'form.fullname': 'Full Name',
+    'form.fullname': 'Name',
     'form.email': 'Email',
     'form.phone': 'Phone Number',
     'form.passport': 'Passport Number',
@@ -137,7 +137,7 @@ const translations = {
     'form.back': 'Back',
     
     // Form Errors
-    'form.error.fullname': 'Full name must be at least 2 characters',
+    'form.error.fullname': 'name must be at least 2 characters',
     'form.error.email': 'Please enter a valid email address',
     'form.error.phone': 'Please enter a valid phone number',
     'form.error.passport': 'Passport number must be at least 6 characters',
