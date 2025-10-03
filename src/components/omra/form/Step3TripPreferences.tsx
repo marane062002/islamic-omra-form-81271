@@ -113,34 +113,93 @@ export const Step3TripPreferences: React.FC = () => {
 
       {/* Conditional Date Fields */}
       {dateType === 'flexible' ? (
-        <div className="space-y-2">
-          <Label htmlFor="flexibleMonth" className={isRTL ? 'font-amiri' : 'font-inter'}>
-            {isRTL ? 'اختر الشهر' : 'Select Month'} *
-          </Label>
-          <Select 
-            value={formData.flexibleMonth || ''} 
-            onValueChange={(value) => handleInputChange('flexibleMonth', value)}
-          >
-            <SelectTrigger className="h-12">
-              <SelectValue placeholder={isRTL ? 'اختر شهر السفر' : 'Select travel month'} />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((month) => (
-                <SelectItem 
-                  key={month.value} 
-                  value={month.value}
-                  className={month.isCurrent ? 'bg-islamic-green/10 font-semibold' : ''}
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="flexibleMonth" className={isRTL ? 'font-amiri' : 'font-inter'}>
+              {isRTL ? 'اختر الشهر' : 'Select Month'} *
+            </Label>
+            <Select
+              value={formData.flexibleMonth || ''}
+              onValueChange={(value) => handleInputChange('flexibleMonth', value)}
+            >
+              <SelectTrigger className="h-12">
+                <SelectValue placeholder={isRTL ? 'اختر شهر السفر' : 'Select travel month'} />
+              </SelectTrigger>
+              <SelectContent>
+                {months.map((month) => (
+                  <SelectItem
+                    key={month.value}
+                    value={month.value}
+                    className={month.isCurrent ? 'bg-islamic-green/10 font-semibold' : ''}
+                  >
+                    {month.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.flexibleMonth && (
+              <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>
+                {errors.flexibleMonth}
+              </p>
+            )}
+          </div>
+
+          {/* Duration Fields for Flexible Dates */}
+          <Card className="p-6 bg-background/50 backdrop-blur-sm border-muted-foreground/20">
+            <h4 className={`font-semibold text-lg mb-4 ${isRTL ? 'font-amiri' : 'font-inter'}`}>
+              {isRTL ? 'المدة المحتملة للرحلة' : 'Probable Trip Duration'}
+            </h4>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="flexibleDurationFrom" className={isRTL ? 'font-amiri' : 'font-inter'}>
+                  {isRTL ? 'من (أيام)' : 'From (days)'}
+                </Label>
+                <Select
+                  value={formData.flexibleDurationFrom || ''}
+                  onValueChange={(value) => handleInputChange('flexibleDurationFrom', value)}
                 >
-                  {month.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.flexibleMonth && (
-            <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>
-              {errors.flexibleMonth}
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder={isRTL ? 'اختر الحد الأدنى' : 'Select minimum'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
+                      <SelectItem key={day} value={day.toString()}>
+                        {day} {isRTL ? (day === 1 ? 'يوم' : 'أيام') : (day === 1 ? 'day' : 'days')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="flexibleDurationTo" className={isRTL ? 'font-amiri' : 'font-inter'}>
+                  {isRTL ? 'إلى (أيام)' : 'To (days)'}
+                </Label>
+                <Select
+                  value={formData.flexibleDurationTo || ''}
+                  onValueChange={(value) => handleInputChange('flexibleDurationTo', value)}
+                >
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder={isRTL ? 'اختر الحد الأقصى' : 'Select maximum'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 28 }, (_, i) => i + 1)
+                      .filter(day => !formData.flexibleDurationFrom || day >= parseInt(formData.flexibleDurationFrom))
+                      .map((day) => (
+                        <SelectItem key={day} value={day.toString()}>
+                          {day} {isRTL ? (day === 1 ? 'يوم' : 'أيام') : (day === 1 ? 'day' : 'days')}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <p className={`text-sm text-muted-foreground mt-3 ${isRTL ? 'font-amiri text-right' : 'font-inter text-left'}`}>
+              {isRTL
+                ? 'مثال: من 4 أيام إلى 8 أيام'
+                : 'Example: From 4 days to 8 days'}
             </p>
-          )}
+          </Card>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-8">

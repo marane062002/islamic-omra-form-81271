@@ -2,7 +2,6 @@ import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import medinaMosque from '@/assets/medina-mosque.jpg';
 
 export const AboutSection: React.FC = () => {
   const { t, isRTL } = useLanguage();
@@ -32,14 +31,14 @@ export const AboutSection: React.FC = () => {
               <Card className="overflow-hidden shadow-xl border-islamic-green-lighter">
                 <CardContent className="p-0">
                   <img
-                    src={medinaMosque}
+                    src="https://images.pexels.com/photos/2731666/pexels-photo-2731666.jpeg?auto=compress&cs=tinysrgb&w=800"
                     alt="Prophet's Mosque in Medina"
                     className="w-full h-64 md:h-80 object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-islamic-green-dark/20 to-transparent"></div>
                 </CardContent>
               </Card>
-              
+
               {/* Decorative elements */}
               <div className="absolute -top-4 -right-4 text-islamic-gold text-6xl opacity-70 z-10">
                 ☪

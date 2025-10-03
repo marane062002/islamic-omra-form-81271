@@ -136,19 +136,23 @@ const TravelPartyStep = ({ data, onChange }: TravelPartyStepProps) => {
           <div className="grid md:grid-cols-3 gap-4">
             {Array.from({ length: needAges }).map((_, index) => (
               <div key={index} className="relative group">
-                <Input
+                <select
                   id={`age-${index}`}
-                  type="number"
-                  min="0"
-                  max="17"
                   value={data.ages[index] || ''}
                   onChange={(e) => updateAge(index, parseInt(e.target.value) || 0)}
-                  placeholder={isRTL ? `طفل ${index + 1}` : `Child ${index + 1}`}
-                  className={`h-12 transition-all duration-300 border-muted-foreground/20 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 bg-background/50 backdrop-blur-sm ${
+                  className={`h-12 w-full rounded-md border border-muted-foreground/20 px-3 py-2 transition-all duration-300 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 bg-background/50 backdrop-blur-sm ${
                     isRTL ? 'text-right' : ''
                   }`}
-                />
-                <Label 
+                >
+                  <option value="">{isRTL ? `اختر عمر الطفل ${index + 1}` : `Select child ${index + 1} age`}</option>
+                  <option value="0">{isRTL ? 'أقل من سنة' : '< 1 year'}</option>
+                  {Array.from({ length: 17 }, (_, i) => i + 1).map((age) => (
+                    <option key={age} value={age}>
+                      {age} {isRTL ? (age === 1 ? 'سنة' : 'سنوات') : (age === 1 ? 'year' : 'years')}
+                    </option>
+                  ))}
+                </select>
+                <Label
                   htmlFor={`age-${index}`}
                   className={`absolute -top-2 bg-background px-2 text-sm font-medium text-muted-foreground transition-all duration-200 ${
                     isRTL ? 'right-3 font-amiri' : 'left-3 font-inter'
@@ -186,7 +190,17 @@ export const Step2AccommodationDetails: React.FC = () => {
   const { formData, updateFormData, errors } = useForm();
 
   const handleHotelCategoryChange = (category: string) => {
-    updateFormData({ hotelCategory: category });
+    const currentCategories = Array.isArray(formData.hotelCategories) ? formData.hotelCategories : [];
+    const isSelected = currentCategories.includes(category);
+
+    const updatedCategories = isSelected
+      ? currentCategories.filter(c => c !== category)
+      : [...currentCategories, category];
+
+    updateFormData({
+      hotelCategories: updatedCategories,
+      hotelCategory: updatedCategories.join(', ')
+    });
   };
 
   const handleRoomCountChange = (count: number) => {
@@ -267,48 +281,56 @@ export const Step2AccommodationDetails: React.FC = () => {
             </span>
           </Label>
           
-          <div className="space-y-3">
+          <div className={`flex flex-wrap gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
             {hotelCategories.map((category) => {
-              const isSelected = formData.hotelCategory === category.value;
-              
+              const currentCategories = Array.isArray(formData.hotelCategories) ? formData.hotelCategories : [];
+              const isSelected = currentCategories.includes(category.value);
+
               return (
                 <div
                   key={category.value}
-                  className={`group relative overflow-hidden rounded-lg border-2 transition-all duration-300 cursor-pointer ${
+                  className={`flex-1 min-w-[200px] group relative overflow-hidden rounded-xl border-2 transition-all duration-300 cursor-pointer ${
                     isSelected
-                      ? 'border-islamic-green bg-islamic-green/5 shadow-md shadow-islamic-green/10'
-                      : 'border-muted-foreground/20 bg-card hover:border-islamic-green/50'
+                      ? 'border-islamic-green bg-islamic-green/10 shadow-lg shadow-islamic-green/20 scale-105'
+                      : 'border-muted-foreground/20 bg-card hover:border-islamic-green/50 hover:shadow-md'
                   }`}
                   onClick={() => handleHotelCategoryChange(category.value)}
                 >
-                  <div className="p-4">
-                    <div className={`flex items-start space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                      <Checkbox
-                        id={category.value}
-                        checked={isSelected}
-                        onCheckedChange={() => handleHotelCategoryChange(category.value)}
-                        className="mt-1 data-[state=checked]:bg-islamic-green data-[state=checked]:border-islamic-green"
-                      />
-                      <div className="flex-1">
+                  <div className="p-5">
+                    <div className="flex flex-col items-center text-center space-y-3">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+                        isSelected ? 'bg-islamic-green' : 'bg-muted'
+                      }`}>
+                        <Hotel className={`w-6 h-6 ${
+                          isSelected ? 'text-white' : 'text-muted-foreground'
+                        }`} />
+                      </div>
+                      <div className="space-y-1">
                         <Label
                           htmlFor={category.value}
-                          className={`cursor-pointer font-semibold text-lg transition-colors ${
+                          className={`cursor-pointer font-bold text-base transition-colors block ${
                             isSelected ? 'text-islamic-green-dark' : 'text-foreground'
                           } ${isRTL ? 'font-amiri' : 'font-inter'}`}
                         >
                           {isRTL ? category.labelAr : category.labelEn}
                         </Label>
-                        <p className={`text-sm text-muted-foreground mt-1 ${
+                        <p className={`text-xs text-muted-foreground ${
                           isRTL ? 'font-amiri' : 'font-inter'
                         }`}>
                           {isRTL ? category.descriptionAr : category.descriptionEn}
                         </p>
                       </div>
+                      <Checkbox
+                        id={category.value}
+                        checked={isSelected}
+                        onCheckedChange={() => handleHotelCategoryChange(category.value)}
+                        className="data-[state=checked]:bg-islamic-green data-[state=checked]:border-islamic-green"
+                      />
                     </div>
                   </div>
-                  
+
                   {isSelected && (
-                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-islamic-green/0 via-islamic-green/5 to-islamic-green/0 animate-pulse" />
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-br from-islamic-green/5 via-islamic-green/10 to-islamic-green/5" />
                   )}
                 </div>
               );

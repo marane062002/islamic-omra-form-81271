@@ -1,11 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Islamic-inspired design system for Omra trip organization */
-
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap');
 
 @layer base {
   :root {
@@ -496,5 +496,78 @@
     height: 4px;
     background: var(--gradient-islamic);
     border-radius: 2px;
+  }
+
+  /* Phone Input Styling */
+  .PhoneInput {
+    display: flex;
+    align-items: center;
+  }
+
+  .PhoneInputInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 1rem;
+    padding: 0;
+    margin-left: 8px;
+  }
+
+  .PhoneInputCountry {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-right: 8px;
+  }
+
+  .PhoneInputCountrySelect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .PhoneInputCountryIcon {
+    width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+
+  .PhoneInputCountrySelectArrow {
+    margin-left: 4px;
+    color: hsl(var(--islamic-green));
+    opacity: 0.8;
+  }
+
+  .PhoneInput:focus-within .PhoneInputCountrySelectArrow {
+    color: hsl(var(--islamic-green));
+    opacity: 1;
+  }
+
+  /* RTL Support for Phone Input */
+  .rtl .PhoneInput {
+    direction: ltr;
+  }
+
+  .rtl .PhoneInputInput {
+    margin-left: 0;
+    margin-right: 8px;
+    text-align: left;
+  }
+
+  .rtl .PhoneInputCountry {
+    padding-right: 0;
+    padding-left: 8px;
+  }
+
+  .rtl .PhoneInputCountrySelectArrow {
+    margin-left: 0;
+    margin-right: 4px;
   }
 }
