@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useForm } from '@/contexts/FormContext';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 // Common email domains for autocomplete
 const COMMON_EMAIL_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com'];
@@ -11,24 +11,24 @@ export const Step1PersonalInfo: React.FC = () => {
   const { t, isRTL } = useLanguage();
   const { formData, updateFormData, errors } = useForm();
   
-  const [emailSuggestion, setEmailSuggestion] = useState('');
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [suggestionText, setSuggestionText] = useState('');
+  const [detectedCountry, setDetectedCountry] = useState('sa');
   
   const emailInputRef = useRef<HTMLInputElement>(null);
   const suggestionRef = useRef<HTMLDivElement>(null);
+  const phoneInputRef = useRef<any>(null);
 
   useEffect(() => {
     const detectUserCountry = async () => {
       try {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
-        const countryCode = data.country_code;
+        const countryCode = data.country_code?.toLowerCase();
         
-        // Update form data with detected country
-        updateFormData({ 
-          detectedCountry: countryCode 
-        });
+        if (countryCode) {
+          setDetectedCountry(countryCode);
+        }
       } catch (error) {
         console.error('Error detecting country:', error);
       }
@@ -85,21 +85,12 @@ export const Step1PersonalInfo: React.FC = () => {
     }
   };
 
-  const handlePhoneChange = (value: string = '') => {
-    updateFormData({ phone: value });
+  const handlePhoneChange = (value: string, country: any) => {
+    updateFormData({ 
+      phone: value,
+      phoneCountry: country.countryCode
+    });
   };
-
-  // Custom styles for phone input to match your design
-  const phoneInputStyle = {
-    '--PhoneInputColor--focus': '#16a34a',
-    '--PhoneInputInternationalIconPhone-opacity': '0.8',
-    '--PhoneInputInternationalIconGlobe-opacity': '0.8',
-    '--PhoneInputCountrySelectArrow-opacity': '0.8',
-    '--PhoneInputCountrySelectArrow-color': '#16a34a',
-    '--PhoneInputCountryFlag-borderColor': '#e5e7eb',
-    '--PhoneInputCountryFlag-height': '24px',
-    '--PhoneInputCountryFlag-width': '24px',
-  } as React.CSSProperties;
 
   return (
     <div className={`space-y-8 ${isRTL ? 'rtl text-right' : 'ltr text-left'}`}>
@@ -172,25 +163,31 @@ export const Step1PersonalInfo: React.FC = () => {
           )}
         </div>
 
-        {/* Phone with react-phone-number-input */}
+        {/* Phone with react-phone-input-2 */}
         <div className="form-input-floating">
-          <div className="phone-input-container">
+          <div className="custom-phone-input-container">
             <PhoneInput
-              international
-              countryCallingCodeEditable={false}
-              defaultCountry={formData.detectedCountry as any || 'SA'}
+              ref={phoneInputRef}
+              country={detectedCountry}
               value={formData.phone}
               onChange={handlePhoneChange}
               placeholder={t('form.phone')}
-              style={phoneInputStyle}
-              className="!w-full"
-              inputClassName="!w-full !border-none !outline-none !bg-transparent !py-4 !px-0 !h-auto"
-              countrySelectProps={{
-                className: '!border-none !bg-transparent'
+              inputProps={{
+                id: 'phone',
+                required: true,
+                className: 'custom-phone-input'
               }}
+              buttonClass="custom-phone-button"
+              dropdownClass="custom-phone-dropdown"
+              containerClass="custom-phone-container"
+              searchClass="custom-phone-search"
+              preferredCountries={['sa', 'ae', 'eg', 'ma', 'tn', 'dz', 'us', 'gb', 'fr', 'de']}
+              enableSearch
+              searchPlaceholder="Search countries..."
+              countryCodeEditable={false}
             />
           </div>
-          <label htmlFor="phone" style={{ left: '60px' }}>
+          <label htmlFor="phone" className="phone-label">
             {t('form.phone')} *
           </label>
           {errors.phone && (
@@ -222,74 +219,143 @@ export const Step1PersonalInfo: React.FC = () => {
       </div>
 
       <style jsx>{`
-        .phone-input-container :global(.PhoneInput) {
-          display: flex;
-          align-items: center;
+        .custom-phone-input-container :global(.custom-phone-container) {
           width: 100%;
-          height: 56px;
-          padding: 0 16px;
+          position: relative;
         }
 
-        .phone-input-container :global(.PhoneInputInput) {
-          flex: 1;
+        .custom-phone-input-container :global(.custom-phone-button) {
+          background: transparent;
+          border: none;
+          border-right: 1px solid #e5e7eb;
+          padding: 0 12px;
+          height: 56px;
+          display: flex;
+          align-items: center;
+          border-radius: 8px 0 0 8px;
+          transition: all 0.2s ease;
+        }
+
+        .custom-phone-input-container :global(.custom-phone-button:hover) {
+          background-color: #f8fafc;
+        }
+
+        .custom-phone-input-container :global(.custom-phone-button:focus) {
+          outline: none;
+          background-color: #f0fdf4;
+        }
+
+        .custom-phone-input-container :global(.custom-phone-input) {
+          width: 100%;
+          height: 56px;
           border: none;
           outline: none;
           background: transparent;
+          padding: 0 16px;
           font-size: 16px;
           line-height: 24px;
-          padding: 0;
-          margin-left: 8px;
+          border-radius: 0 8px 8px 0;
         }
 
-        .phone-input-container :global(.PhoneInputCountry) {
-          display: flex;
-          align-items: center;
-          margin-right: 8px;
+        .custom-phone-input-container :global(.custom-phone-dropdown) {
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+          background: white;
+          z-index: 50;
+          max-height: 300px;
+          overflow-y: auto;
         }
 
-        .phone-input-container :global(.PhoneInputCountrySelect) {
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 100%;
+        .custom-phone-input-container :global(.custom-phone-search) {
+          padding: 12px;
+          border-bottom: 1px solid #e5e7eb;
+          margin: 0;
+          border-radius: 8px 8px 0 0;
+        }
+
+        .custom-phone-input-container :global(.custom-phone-search input) {
           width: 100%;
-          opacity: 0;
-          cursor: pointer;
+          padding: 8px 12px;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          outline: none;
+          transition: all 0.2s ease;
         }
 
-        .phone-input-container :global(.PhoneInputCountryIcon) {
-          width: 24px;
-          height: 24px;
-          border-radius: 2px;
+        .custom-phone-input-container :global(.custom-phone-search input:focus) {
+          border-color: #16a34a;
+          box-shadow: 0 0 0 3px rgb(22 163 74 / 0.1);
         }
 
-        .phone-input-container :global(.PhoneInputCountrySelectArrow) {
-          margin-left: 4px;
-          color: #16a34a;
+        .custom-phone-input-container :global(.flag-dropdown) {
+          border: none !important;
+          background: transparent !important;
+        }
+
+        .custom-phone-input-container :global(.selected-flag) {
+          padding: 0 12px !important;
+          border-radius: 8px 0 0 8px !important;
+        }
+
+        .custom-phone-input-container :global(.selected-flag:hover) {
+          background-color: #f8fafc !important;
+        }
+
+        .custom-phone-input-container :global(.selected-flag:focus) {
+          background-color: #f0fdf4 !important;
+        }
+
+        .custom-phone-input-container :global(.country-list) {
+          border: 1px solid #e5e7eb !important;
+          border-radius: 8px !important;
+          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+        }
+
+        .custom-phone-input-container :global(.country) {
+          padding: 8px 12px !important;
+          border-bottom: 1px solid #f3f4f6 !important;
+        }
+
+        .custom-phone-input-container :global(.country:hover) {
+          background-color: #f8fafc !important;
+        }
+
+        .custom-phone-input-container :global(.country.highlight) {
+          background-color: #f0fdf4 !important;
+          border-color: #16a34a !important;
+        }
+
+        .custom-phone-input-container :global(.dial-code) {
+          color: #6b7280 !important;
         }
 
         /* RTL Support */
         ${isRTL ? `
-          .phone-input-container :global(.PhoneInput) {
-            direction: rtl;
+          .custom-phone-input-container :global(.custom-phone-button) {
+            border-right: none;
+            border-left: 1px solid #e5e7eb;
+            border-radius: 0 8px 8px 0;
           }
-          
-          .phone-input-container :global(.PhoneInputInput) {
-            margin-left: 0;
-            margin-right: 8px;
+
+          .custom-phone-input-container :global(.custom-phone-input) {
+            border-radius: 8px 0 0 8px;
             text-align: right;
           }
-          
-          .phone-input-container :global(.PhoneInputCountry) {
-            margin-right: 0;
-            margin-left: 8px;
+
+          .custom-phone-input-container :global(.selected-flag) {
+            border-radius: 0 8px 8px 0 !important;
           }
-          
-          .phone-input-container :global(.PhoneInputCountrySelectArrow) {
-            margin-left: 0;
-            margin-right: 4px;
+
+          .phone-label {
+            left: auto !important;
+            right: 60px !important;
           }
         ` : ''}
+
+        .phone-label {
+          left: 60px;
+        }
       `}</style>
     </div>
   );
