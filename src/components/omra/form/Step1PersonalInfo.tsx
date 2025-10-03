@@ -17,7 +17,6 @@ export const Step1PersonalInfo: React.FC = () => {
   
   const emailInputRef = useRef<HTMLInputElement>(null);
   const suggestionRef = useRef<HTMLDivElement>(null);
-  const phoneInputRef = useRef<any>(null);
 
   useEffect(() => {
     const detectUserCountry = async () => {
@@ -163,33 +162,30 @@ export const Step1PersonalInfo: React.FC = () => {
           )}
         </div>
 
-        {/* Phone with react-phone-input-2 */}
-        <div className="form-input-floating">
-          <div className="custom-phone-input-container">
-            <PhoneInput
-              ref={phoneInputRef}
-              country={detectedCountry}
-              value={formData.phone}
-              onChange={handlePhoneChange}
-              placeholder={t('form.phone')}
-              inputProps={{
-                id: 'phone',
-                required: true,
-                className: 'custom-phone-input'
-              }}
-              buttonClass="custom-phone-button"
-              dropdownClass="custom-phone-dropdown"
-              containerClass="custom-phone-container"
-              searchClass="custom-phone-search"
-              preferredCountries={['sa', 'ae', 'eg', 'ma', 'tn', 'dz', 'us', 'gb', 'fr', 'de']}
-              enableSearch
-              searchPlaceholder="Search countries..."
-              countryCodeEditable={false}
-            />
-          </div>
+        {/* Phone Input - Custom Styled */}
+        <div className="form-group-phone">
           <label htmlFor="phone" className="phone-label">
             {t('form.phone')} *
           </label>
+          <div className="phone-input-wrapper">
+            <PhoneInput
+              country={detectedCountry}
+              value={formData.phone}
+              onChange={handlePhoneChange}
+              inputProps={{
+                id: 'phone',
+                required: true,
+                name: 'phone',
+              }}
+              preferredCountries={['sa', 'ae', 'eg', 'ma', 'tn', 'dz', 'us', 'gb', 'fr', 'de']}
+              enableSearch
+              searchPlaceholder={isRTL ? 'ابحث عن الدولة...' : 'Search countries...'}
+              countryCodeEditable={false}
+              autoFormat={true}
+              placeholder={isRTL ? 'ادخل رقم الهاتف' : 'Enter phone number'}
+              specialLabel="" // Remove special label to avoid conflicts
+            />
+          </div>
           {errors.phone && (
             <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>{errors.phone}</p>
           )}
@@ -219,143 +215,190 @@ export const Step1PersonalInfo: React.FC = () => {
       </div>
 
       <style jsx>{`
-        .custom-phone-input-container :global(.custom-phone-container) {
-          width: 100%;
+        .form-group-phone {
           position: relative;
-        }
-
-        .custom-phone-input-container :global(.custom-phone-button) {
-          background: transparent;
-          border: none;
-          border-right: 1px solid #e5e7eb;
-          padding: 0 12px;
-          height: 56px;
-          display: flex;
-          align-items: center;
-          border-radius: 8px 0 0 8px;
-          transition: all 0.2s ease;
-        }
-
-        .custom-phone-input-container :global(.custom-phone-button:hover) {
-          background-color: #f8fafc;
-        }
-
-        .custom-phone-input-container :global(.custom-phone-button:focus) {
-          outline: none;
-          background-color: #f0fdf4;
-        }
-
-        .custom-phone-input-container :global(.custom-phone-input) {
           width: 100%;
-          height: 56px;
-          border: none;
-          outline: none;
-          background: transparent;
-          padding: 0 16px;
-          font-size: 16px;
-          line-height: 24px;
-          border-radius: 0 8px 8px 0;
         }
 
-        .custom-phone-input-container :global(.custom-phone-dropdown) {
-          border: 1px solid #e5e7eb;
-          border-radius: 8px;
-          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        .phone-label {
+          position: absolute;
+          top: -8px;
+          left: 12px;
           background: white;
-          z-index: 50;
-          max-height: 300px;
-          overflow-y: auto;
-        }
-
-        .custom-phone-input-container :global(.custom-phone-search) {
-          padding: 12px;
-          border-bottom: 1px solid #e5e7eb;
-          margin: 0;
-          border-radius: 8px 8px 0 0;
-        }
-
-        .custom-phone-input-container :global(.custom-phone-search input) {
-          width: 100%;
-          padding: 8px 12px;
-          border: 1px solid #d1d5db;
-          border-radius: 6px;
-          outline: none;
+          padding: 0 4px;
+          font-size: 12px;
+          color: #16a34a;
+          z-index: 10;
           transition: all 0.2s ease;
         }
 
-        .custom-phone-input-container :global(.custom-phone-search input:focus) {
-          border-color: #16a34a;
-          box-shadow: 0 0 0 3px rgb(22 163 74 / 0.1);
+        .phone-input-wrapper {
+          width: 100%;
         }
 
-        .custom-phone-input-container :global(.flag-dropdown) {
-          border: none !important;
+        /* Main container styling */
+        .phone-input-wrapper :global(.react-tel-input) {
+          width: 100% !important;
+          font-family: inherit;
+        }
+
+        /* Form field container */
+        .phone-input-wrapper :global(.react-tel-input .form-control) {
+          width: 100% !important;
+          height: 56px !important;
+          padding: 16px 16px 16px 60px !important;
+          font-size: 16px !important;
+          line-height: 24px !important;
+          border: 1px solid #d1d5db !important;
+          border-radius: 8px !important;
           background: transparent !important;
+          transition: all 0.2s ease !important;
+          font-family: inherit !important;
         }
 
-        .custom-phone-input-container :global(.selected-flag) {
-          padding: 0 12px !important;
+        /* Focus state */
+        .phone-input-wrapper :global(.react-tel-input .form-control:focus) {
+          border-color: #16a34a !important;
+          box-shadow: 0 0 0 3px rgb(22 163 74 / 0.1) !important;
+          outline: none !important;
+        }
+
+        /* Country dropdown button */
+        .phone-input-wrapper :global(.react-tel-input .flag-dropdown) {
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          bottom: 0 !important;
+          background: transparent !important;
+          border: none !important;
+          border-right: 1px solid #d1d5db !important;
           border-radius: 8px 0 0 8px !important;
         }
 
-        .custom-phone-input-container :global(.selected-flag:hover) {
+        .phone-input-wrapper :global(.react-tel-input .flag-dropdown.open) {
+          background: white !important;
+          border: 1px solid #16a34a !important;
+          border-right: none !important;
+        }
+
+        /* Selected flag area */
+        .phone-input-wrapper :global(.react-tel-input .selected-flag) {
+          background: transparent !important;
+          padding: 0 12px !important;
+          width: 52px !important;
+          height: 100% !important;
+          border-radius: 8px 0 0 8px !important;
+          transition: background-color 0.2s ease !important;
+        }
+
+        .phone-input-wrapper :global(.react-tel-input .selected-flag:hover) {
           background-color: #f8fafc !important;
         }
 
-        .custom-phone-input-container :global(.selected-flag:focus) {
+        .phone-input-wrapper :global(.react-tel-input .selected-flag:focus) {
           background-color: #f0fdf4 !important;
         }
 
-        .custom-phone-input-container :global(.country-list) {
+        /* Country dropdown menu */
+        .phone-input-wrapper :global(.country-list) {
           border: 1px solid #e5e7eb !important;
           border-radius: 8px !important;
           box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+          margin-top: 4px !important;
+          max-height: 300px !important;
+          overflow-y: auto !important;
+          background: white !important;
         }
 
-        .custom-phone-input-container :global(.country) {
+        /* Individual country items */
+        .phone-input-wrapper :global(.country) {
           padding: 8px 12px !important;
           border-bottom: 1px solid #f3f4f6 !important;
+          font-size: 14px !important;
+          line-height: 20px !important;
         }
 
-        .custom-phone-input-container :global(.country:hover) {
+        .phone-input-wrapper :global(.country:hover) {
           background-color: #f8fafc !important;
         }
 
-        .custom-phone-input-container :global(.country.highlight) {
+        .phone-input-wrapper :global(.country.highlight) {
           background-color: #f0fdf4 !important;
           border-color: #16a34a !important;
         }
 
-        .custom-phone-input-container :global(.dial-code) {
-          color: #6b7280 !important;
+        /* Search box in dropdown */
+        .phone-input-wrapper :global(.search-box) {
+          padding: 12px !important;
+          border-bottom: 1px solid #e5e7eb !important;
+          margin: 0 !important;
+          border-radius: 8px 8px 0 0 !important;
+          font-size: 14px !important;
+        }
+
+        .phone-input-wrapper :global(.search-box input) {
+          width: 100% !important;
+          padding: 8px 12px !important;
+          border: 1px solid #d1d5db !important;
+          border-radius: 6px !important;
+          outline: none !important;
+          transition: all 0.2s ease !important;
+          font-size: 14px !important;
+        }
+
+        .phone-input-wrapper :global(.search-box input:focus) {
+          border-color: #16a34a !important;
+          box-shadow: 0 0 0 3px rgb(22 163 74 / 0.1) !important;
+        }
+
+        /* Dial code styling */
+        .phone-input-wrapper :global(.react-tel-input .selected-flag .arrow) {
+          border-top-color: #6b7280 !important;
+          margin-left: 4px !important;
+        }
+
+        .phone-input-wrapper :global(.react-tel-input .selected-flag.open .arrow) {
+          border-bottom-color: #16a34a !important;
         }
 
         /* RTL Support */
         ${isRTL ? `
-          .custom-phone-input-container :global(.custom-phone-button) {
-            border-right: none;
-            border-left: 1px solid #e5e7eb;
-            border-radius: 0 8px 8px 0;
+          .phone-label {
+            left: auto;
+            right: 12px;
           }
 
-          .custom-phone-input-container :global(.custom-phone-input) {
-            border-radius: 8px 0 0 8px;
+          .phone-input-wrapper :global(.react-tel-input .form-control) {
+            padding: 16px 60px 16px 16px !important;
             text-align: right;
           }
 
-          .custom-phone-input-container :global(.selected-flag) {
+          .phone-input-wrapper :global(.react-tel-input .flag-dropdown) {
+            left: auto !important;
+            right: 0 !important;
+            border-right: none !important;
+            border-left: 1px solid #d1d5db !important;
             border-radius: 0 8px 8px 0 !important;
           }
 
-          .phone-label {
-            left: auto !important;
-            right: 60px !important;
+          .phone-input-wrapper :global(.react-tel-input .flag-dropdown.open) {
+            border-left: 1px solid #16a34a !important;
+            border-right: none !important;
+          }
+
+          .phone-input-wrapper :global(.react-tel-input .selected-flag) {
+            border-radius: 0 8px 8px 0 !important;
+          }
+
+          .phone-input-wrapper :global(.country-list) {
+            text-align: right;
+          }
+
+          .phone-input-wrapper :global(.react-tel-input .selected-flag .arrow) {
+            margin-left: 0 !important;
+            margin-right: 4px !important;
           }
         ` : ''}
-
-        .phone-label {
-          left: 60px;
-        }
       `}</style>
     </div>
   );
