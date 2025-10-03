@@ -162,11 +162,8 @@ export const Step1PersonalInfo: React.FC = () => {
           )}
         </div>
 
-        {/* Phone Input - Custom Styled */}
-        <div className="form-group-phone">
-          <label htmlFor="phone" className="phone-label">
-            {t('form.phone')} *
-          </label>
+        {/* Phone Input - Underlined Style */}
+        <div className="form-input-floating phone-input-container">
           <div className="phone-input-wrapper">
             <PhoneInput
               country={detectedCountry}
@@ -183,9 +180,12 @@ export const Step1PersonalInfo: React.FC = () => {
               countryCodeEditable={false}
               autoFormat={true}
               placeholder={isRTL ? 'ادخل رقم الهاتف' : 'Enter phone number'}
-              specialLabel="" // Remove special label to avoid conflicts
+              specialLabel=""
             />
           </div>
+          <label htmlFor="phone" className="phone-label">
+            {t('form.phone')} *
+          </label>
           {errors.phone && (
             <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>{errors.phone}</p>
           )}
@@ -215,19 +215,18 @@ export const Step1PersonalInfo: React.FC = () => {
       </div>
 
       <style jsx>{`
-        .form-group-phone {
+        .phone-input-container {
           position: relative;
-          width: 100%;
         }
 
         .phone-label {
           position: absolute;
           top: -8px;
-          left: 12px;
-          background: white;
-          padding: 0 4px;
+          left: 0;
           font-size: 12px;
           color: #16a34a;
+          background: white;
+          padding: 0 4px;
           z-index: 10;
           transition: all 0.2s ease;
         }
@@ -236,34 +235,40 @@ export const Step1PersonalInfo: React.FC = () => {
           width: 100%;
         }
 
-        /* Main container styling */
+        /* Underlined input style to match other fields */
         .phone-input-wrapper :global(.react-tel-input) {
           width: 100% !important;
           font-family: inherit;
         }
 
-        /* Form field container */
+        /* Underlined input style */
         .phone-input-wrapper :global(.react-tel-input .form-control) {
           width: 100% !important;
           height: 56px !important;
           padding: 16px 16px 16px 60px !important;
           font-size: 16px !important;
           line-height: 24px !important;
-          border: 1px solid #d1d5db !important;
-          border-radius: 8px !important;
+          border: none !important;
+          border-bottom: 2px solid #d1d5db !important;
+          border-radius: 0 !important;
           background: transparent !important;
           transition: all 0.2s ease !important;
           font-family: inherit !important;
         }
 
-        /* Focus state */
+        /* Focus state - underlined style */
         .phone-input-wrapper :global(.react-tel-input .form-control:focus) {
-          border-color: #16a34a !important;
-          box-shadow: 0 0 0 3px rgb(22 163 74 / 0.1) !important;
+          border-bottom-color: #16a34a !important;
+          box-shadow: none !important;
           outline: none !important;
         }
 
-        /* Country dropdown button */
+        /* Hover state */
+        .phone-input-wrapper :global(.react-tel-input .form-control:hover) {
+          border-bottom-color: #9ca3af !important;
+        }
+
+        /* Country dropdown button - underlined style */
         .phone-input-wrapper :global(.react-tel-input .flag-dropdown) {
           position: absolute !important;
           top: 0 !important;
@@ -271,14 +276,13 @@ export const Step1PersonalInfo: React.FC = () => {
           bottom: 0 !important;
           background: transparent !important;
           border: none !important;
-          border-right: 1px solid #d1d5db !important;
-          border-radius: 8px 0 0 8px !important;
+          border-bottom: 2px solid #d1d5db !important;
+          border-radius: 0 !important;
         }
 
         .phone-input-wrapper :global(.react-tel-input .flag-dropdown.open) {
           background: white !important;
-          border: 1px solid #16a34a !important;
-          border-right: none !important;
+          border-bottom-color: #16a34a !important;
         }
 
         /* Selected flag area */
@@ -287,7 +291,7 @@ export const Step1PersonalInfo: React.FC = () => {
           padding: 0 12px !important;
           width: 52px !important;
           height: 100% !important;
-          border-radius: 8px 0 0 8px !important;
+          border-radius: 0 !important;
           transition: background-color 0.2s ease !important;
         }
 
@@ -365,7 +369,7 @@ export const Step1PersonalInfo: React.FC = () => {
         ${isRTL ? `
           .phone-label {
             left: auto;
-            right: 12px;
+            right: 0;
           }
 
           .phone-input-wrapper :global(.react-tel-input .form-control) {
@@ -376,18 +380,16 @@ export const Step1PersonalInfo: React.FC = () => {
           .phone-input-wrapper :global(.react-tel-input .flag-dropdown) {
             left: auto !important;
             right: 0 !important;
-            border-right: none !important;
-            border-left: 1px solid #d1d5db !important;
-            border-radius: 0 8px 8px 0 !important;
+            border-bottom: 2px solid #d1d5db !important;
+            border-radius: 0 !important;
           }
 
           .phone-input-wrapper :global(.react-tel-input .flag-dropdown.open) {
-            border-left: 1px solid #16a34a !important;
-            border-right: none !important;
+            border-bottom-color: #16a34a !important;
           }
 
           .phone-input-wrapper :global(.react-tel-input .selected-flag) {
-            border-radius: 0 8px 8px 0 !important;
+            border-radius: 0 !important;
           }
 
           .phone-input-wrapper :global(.country-list) {
