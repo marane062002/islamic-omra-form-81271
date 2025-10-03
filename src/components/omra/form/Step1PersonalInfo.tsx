@@ -1,44 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useForm } from '@/contexts/FormContext';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 // Common email domains for autocomplete
 const COMMON_EMAIL_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com'];
-
-// Common country codes (you can expand this list)
-const COUNTRY_CODES = [
-  { code: '+1', country: 'US', flag: '🇺🇸' },
-  { code: '+44', country: 'GB', flag: '🇬🇧' },
-  { code: '+33', country: 'FR', flag: '🇫🇷' },
-  { code: '+49', country: 'DE', flag: '🇩🇪' },
-  { code: '+966', country: 'SA', flag: '🇸🇦' },
-  { code: '+971', country: 'AE', flag: '🇦🇪' },
-  { code: '+20', country: 'EG', flag: '🇪🇬' },
-  { code: '+212', country: 'MA', flag: '🇲🇦' },
-  { code: '+216', country: 'TN', flag: '🇹🇳' },
-  { code: '+213', country: 'DZ', flag: '🇩🇿' },
-  { code: '+90', country: 'TR', flag: '🇹🇷' },
-  { code: '+92', country: 'PK', flag: '🇵🇰' },
-  { code: '+91', country: 'IN', flag: '🇮🇳' },
-  { code: '+86', country: 'CN', flag: '🇨🇳' },
-  { code: '+81', country: 'JP', flag: '🇯🇵' },
-  { code: '+82', country: 'KR', flag: '🇰🇷' },
-];
 
 export const Step1PersonalInfo: React.FC = () => {
   const { t, isRTL } = useLanguage();
   const { formData, updateFormData, errors } = useForm();
   
-  const [showEmailSuggestions, setShowEmailSuggestions] = useState(false);
-  const [emailSuggestions, setEmailSuggestions] = useState<string[]>([]);
-  const [selectedCountryCode, setSelectedCountryCode] = useState('+1');
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
-  const [userCountryCode, setUserCountryCode] = useState('+1');
+  const [emailSuggestion, setEmailSuggestion] = useState('');
+  const [showSuggestion, setShowSuggestion] = useState(false);
+  const [suggestionText, setSuggestionText] = useState('');
   
   const emailInputRef = useRef<HTMLInputElement>(null);
-  const countryDropdownRef = useRef<HTMLDivElement>(null);
+  const suggestionRef = useRef<HTMLDivElement>(null);
 
-  // Detect user's country code based on IP
   useEffect(() => {
     const detectUserCountry = async () => {
       try {
@@ -46,39 +25,16 @@ export const Step1PersonalInfo: React.FC = () => {
         const data = await response.json();
         const countryCode = data.country_code;
         
-        // Find matching country code in our list
-        const matchedCountry = COUNTRY_CODES.find(country => 
-          country.country === countryCode
-        );
-        
-        if (matchedCountry) {
-          setUserCountryCode(matchedCountry.code);
-          setSelectedCountryCode(matchedCountry.code);
-          // Update phone number with detected country code if phone is empty
-          if (!formData.phone) {
-            updateFormData({ phone: matchedCountry.code });
-          }
-        }
+        // Update form data with detected country
+        updateFormData({ 
+          detectedCountry: countryCode 
+        });
       } catch (error) {
         console.error('Error detecting country:', error);
-        // Fallback to a default country code
-        setSelectedCountryCode('+1');
       }
     };
 
     detectUserCountry();
-  }, []);
-
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
-        setShowCountryDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleInputChange = (field: string, value: string) => {
@@ -87,51 +43,63 @@ export const Step1PersonalInfo: React.FC = () => {
 
   const handleEmailChange = (value: string) => {
     updateFormData({ email: value });
-    
-    // Show suggestions when user types @
+    updateEmailSuggestion(value);
+  };
+
+  const updateEmailSuggestion = (value: string) => {
     if (value.includes('@')) {
       const atIndex = value.indexOf('@');
       const afterAt = value.slice(atIndex + 1);
       const beforeAt = value.slice(0, atIndex);
       
-      if (afterAt.length > 0) {
-        const filteredDomains = COMMON_EMAIL_DOMAINS.filter(domain => 
-          domain.startsWith(afterAt.toLowerCase())
-        );
-        setEmailSuggestions(filteredDomains.map(domain => `${beforeAt}@${domain}`));
+      // Find matching domain
+      const matchedDomain = COMMON_EMAIL_DOMAINS.find(domain => 
+        domain.startsWith(afterAt.toLowerCase())
+      );
+
+      if (matchedDomain && afterAt.length > 0) {
+        const remainingPart = matchedDomain.slice(afterAt.length);
+        setSuggestionText(value + remainingPart);
+        setShowSuggestion(true);
+      } else if (afterAt.length === 0) {
+        // If just @ is typed, suggest the first domain
+        setSuggestionText(value + COMMON_EMAIL_DOMAINS[0]);
+        setShowSuggestion(true);
       } else {
-        setEmailSuggestions(COMMON_EMAIL_DOMAINS.map(domain => `${beforeAt}@${domain}`));
+        setShowSuggestion(false);
       }
-      setShowEmailSuggestions(true);
     } else {
-      setShowEmailSuggestions(false);
+      setShowSuggestion(false);
     }
   };
 
-  const handleEmailSuggestionClick = (suggestion: string) => {
-    updateFormData({ email: suggestion });
-    setShowEmailSuggestions(false);
-    emailInputRef.current?.focus();
+  const handleEmailKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Tab' || e.key === 'Enter') {
+      if (showSuggestion && suggestionText) {
+        e.preventDefault();
+        updateFormData({ email: suggestionText });
+        setShowSuggestion(false);
+      }
+    } else if (e.key === 'Escape') {
+      setShowSuggestion(false);
+    }
   };
 
-  const handleCountryCodeSelect = (countryCode: string) => {
-    setSelectedCountryCode(countryCode);
-    setShowCountryDropdown(false);
-    
-    // Update phone number with new country code
-    const currentPhone = formData.phone.replace(/^\+\d+\s?/, '');
-    updateFormData({ phone: `${countryCode} ${currentPhone}` });
+  const handlePhoneChange = (value: string = '') => {
+    updateFormData({ phone: value });
   };
 
-  const handlePhoneChange = (value: string) => {
-    // Remove existing country code if present
-    const phoneWithoutCode = value.replace(/^\+\d+\s?/, '');
-    updateFormData({ phone: `${selectedCountryCode} ${phoneWithoutCode}` });
-  };
-
-  const getCurrentPhoneNumber = () => {
-    return formData.phone.replace(/^\+\d+\s?/, '');
-  };
+  // Custom styles for phone input to match your design
+  const phoneInputStyle = {
+    '--PhoneInputColor--focus': '#16a34a',
+    '--PhoneInputInternationalIconPhone-opacity': '0.8',
+    '--PhoneInputInternationalIconGlobe-opacity': '0.8',
+    '--PhoneInputCountrySelectArrow-opacity': '0.8',
+    '--PhoneInputCountrySelectArrow-color': '#16a34a',
+    '--PhoneInputCountryFlag-borderColor': '#e5e7eb',
+    '--PhoneInputCountryFlag-height': '24px',
+    '--PhoneInputCountryFlag-width': '24px',
+  } as React.CSSProperties;
 
   return (
     <div className={`space-y-8 ${isRTL ? 'rtl text-right' : 'ltr text-left'}`}>
@@ -164,94 +132,65 @@ export const Step1PersonalInfo: React.FC = () => {
           )}
         </div>
 
-        {/* Email with Autocomplete */}
+        {/* Email with Inline Autocomplete */}
         <div className="form-input-floating relative">
-          <input
-            ref={emailInputRef}
-            type="email"
-            id="email"
-            value={formData.email}
-            onChange={(e) => handleEmailChange(e.target.value)}
-            onBlur={() => setTimeout(() => setShowEmailSuggestions(false), 200)}
-            onFocus={() => {
-              if (formData.email.includes('@')) {
-                const atIndex = formData.email.indexOf('@');
-                const beforeAt = formData.email.slice(0, atIndex);
-                setEmailSuggestions(COMMON_EMAIL_DOMAINS.map(domain => `${beforeAt}@${domain}`));
-                setShowEmailSuggestions(true);
-              }
-            }}
-            placeholder={t('form.email')}
-          />
+          <div className="relative">
+            <input
+              ref={emailInputRef}
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              onKeyDown={handleEmailKeyDown}
+              onBlur={() => setTimeout(() => setShowSuggestion(false), 200)}
+              placeholder={t('form.email')}
+              className="bg-transparent relative z-10 w-full"
+            />
+            {showSuggestion && (
+              <div
+                ref={suggestionRef}
+                className="absolute top-0 left-0 w-full h-full text-gray-400 pointer-events-none z-0"
+                style={{ 
+                  background: 'transparent',
+                  border: 'none',
+                  outline: 'none'
+                }}
+              >
+                <span className="invisible">{formData.email}</span>
+                <span className="text-gray-400 absolute top-0 left-0">
+                  {suggestionText.slice(formData.email.length)}
+                </span>
+              </div>
+            )}
+          </div>
           <label htmlFor="email">
             {t('form.email')} *
           </label>
-          
-          {/* Email Suggestions */}
-          {showEmailSuggestions && emailSuggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-10 mt-1 max-h-48 overflow-y-auto">
-              {emailSuggestions.map((suggestion, index) => (
-                <div
-                  key={index}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
-                  onMouseDown={() => handleEmailSuggestionClick(suggestion)}
-                >
-                  {suggestion}
-                </div>
-              ))}
-            </div>
-          )}
           
           {errors.email && (
             <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'font-amiri' : 'font-inter'}`}>{errors.email}</p>
           )}
         </div>
 
-        {/* Phone with Country Code */}
+        {/* Phone with react-phone-number-input */}
         <div className="form-input-floating">
-          <div className="flex">
-            {/* Country Code Dropdown */}
-            <div className="relative" ref={countryDropdownRef}>
-              <button
-                type="button"
-                className="flex items-center px-3 border-r border-gray-300 bg-gray-50 rounded-l-lg hover:bg-gray-100"
-                onClick={() => setShowCountryDropdown(!showCountryDropdown)}
-              >
-                <span className="text-sm font-medium">{selectedCountryCode}</span>
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              
-              {showCountryDropdown && (
-                <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto w-48">
-                  {COUNTRY_CODES.map((country, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => handleCountryCodeSelect(country.code)}
-                    >
-                      <span className="text-lg mr-2">{country.flag}</span>
-                      <span className="text-sm font-medium">{country.code}</span>
-                      <span className="text-xs text-gray-500 ml-2">({country.country})</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            {/* Phone Input */}
-            <input
-              type="tel"
-              id="phone"
-              value={getCurrentPhoneNumber()}
-              onChange={(e) => handlePhoneChange(e.target.value)}
+          <div className="phone-input-container">
+            <PhoneInput
+              international
+              countryCallingCodeEditable={false}
+              defaultCountry={formData.detectedCountry as any || 'SA'}
+              value={formData.phone}
+              onChange={handlePhoneChange}
               placeholder={t('form.phone')}
-              className="flex-1 rounded-r-lg"
-              style={{ marginLeft: 0 }}
+              style={phoneInputStyle}
+              className="!w-full"
+              inputClassName="!w-full !border-none !outline-none !bg-transparent !py-4 !px-0 !h-auto"
+              countrySelectProps={{
+                className: '!border-none !bg-transparent'
+              }}
             />
           </div>
-          <label htmlFor="phone" className="!left-12">
+          <label htmlFor="phone" style={{ left: '60px' }}>
             {t('form.phone')} *
           </label>
           {errors.phone && (
@@ -281,6 +220,77 @@ export const Step1PersonalInfo: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .phone-input-container :global(.PhoneInput) {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          height: 56px;
+          padding: 0 16px;
+        }
+
+        .phone-input-container :global(.PhoneInputInput) {
+          flex: 1;
+          border: none;
+          outline: none;
+          background: transparent;
+          font-size: 16px;
+          line-height: 24px;
+          padding: 0;
+          margin-left: 8px;
+        }
+
+        .phone-input-container :global(.PhoneInputCountry) {
+          display: flex;
+          align-items: center;
+          margin-right: 8px;
+        }
+
+        .phone-input-container :global(.PhoneInputCountrySelect) {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          opacity: 0;
+          cursor: pointer;
+        }
+
+        .phone-input-container :global(.PhoneInputCountryIcon) {
+          width: 24px;
+          height: 24px;
+          border-radius: 2px;
+        }
+
+        .phone-input-container :global(.PhoneInputCountrySelectArrow) {
+          margin-left: 4px;
+          color: #16a34a;
+        }
+
+        /* RTL Support */
+        ${isRTL ? `
+          .phone-input-container :global(.PhoneInput) {
+            direction: rtl;
+          }
+          
+          .phone-input-container :global(.PhoneInputInput) {
+            margin-left: 0;
+            margin-right: 8px;
+            text-align: right;
+          }
+          
+          .phone-input-container :global(.PhoneInputCountry) {
+            margin-right: 0;
+            margin-left: 8px;
+          }
+          
+          .phone-input-container :global(.PhoneInputCountrySelectArrow) {
+            margin-left: 0;
+            margin-right: 4px;
+          }
+        ` : ''}
+      `}</style>
     </div>
   );
 };
