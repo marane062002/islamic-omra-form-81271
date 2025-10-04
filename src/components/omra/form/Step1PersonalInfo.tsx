@@ -112,7 +112,7 @@ export const Step1PersonalInfo: React.FC = () => {
             id="fullName"
             value={formData.fullName}
             onChange={(e) => handleInputChange('fullName', e.target.value)}
-            placeholder={t('form.fullname')}
+            placeholder=" " // Important: Use space for floating label pattern
           />
           <label htmlFor="fullName">
             {t('form.fullname')} *
@@ -122,7 +122,7 @@ export const Step1PersonalInfo: React.FC = () => {
           )}
         </div>
 
-        {/* Email with Inline Autocomplete */}
+        {/* Email with Inline Autocomplete - FIXED */}
         <div className="form-input-floating relative">
           <div className="relative">
             <input
@@ -133,7 +133,7 @@ export const Step1PersonalInfo: React.FC = () => {
               onChange={(e) => handleEmailChange(e.target.value)}
               onKeyDown={handleEmailKeyDown}
               onBlur={() => setTimeout(() => setShowSuggestion(false), 200)}
-              placeholder={t('form.email')}
+              placeholder=" " // Important: Use space instead of actual placeholder text
               className="bg-transparent relative z-10 w-full"
             />
             {showSuggestion && (
@@ -220,8 +220,58 @@ export const Step1PersonalInfo: React.FC = () => {
         </div>
       </div>
 
-      {/* Add this to your global CSS file or CSS modules */}
+      {/* Add CSS for floating label behavior */}
       <style jsx global>{`
+        /* Floating label styles for all inputs */
+        .form-input-floating {
+          position: relative;
+          width: 100%;
+        }
+
+        .form-input-floating input {
+          width: 100%;
+          height: 56px;
+          padding: 16px;
+          font-size: 16px;
+          line-height: 24px;
+          border: none;
+          border-bottom: 1px solid #d1d5db;
+          border-radius: 0;
+          background: transparent;
+          transition: all 0.2s ease;
+          outline: none;
+        }
+
+        .form-input-floating input:focus {
+          border-bottom-color: #16a34a;
+        }
+
+        .form-input-floating label {
+          position: absolute;
+          top: 16px;
+          left: 16px;
+          font-size: 16px;
+          color: #6b7280;
+          pointer-events: none;
+          transition: all 0.2s ease;
+          background: white;
+          padding: 0 4px;
+        }
+
+        /* Floating label effect */
+        .form-input-floating input:focus + label,
+        .form-input-floating input:not(:placeholder-shown) + label {
+          top: -8px;
+          font-size: 12px;
+          color: #16a34a;
+        }
+
+        /* RTL support for floating labels */
+        .rtl .form-input-floating label {
+          left: auto;
+          right: 16px;
+        }
+
         /* Main container */
         .custom-phone-container {
           width: 100% !important;
@@ -334,7 +384,7 @@ export const Step1PersonalInfo: React.FC = () => {
           margin-right: 4px !important;
         }
 
-        /* Floating label styles */
+        /* Floating label styles for phone */
         .form-input-floating-phone {
           position: relative;
           width: 100%;
