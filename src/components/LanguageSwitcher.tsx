@@ -13,6 +13,7 @@ const languages: { code: Language; name: string; nativeName: string }[] = [
   { code: 'en', name: 'English', nativeName: 'English' },
   { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
   { code: 'fr', name: 'French', nativeName: 'Français' },
+  { code: 'de', name: 'German', nativeName: 'Deutsch' },
 ];
 
 export const LanguageSwitcher: React.FC = () => {
