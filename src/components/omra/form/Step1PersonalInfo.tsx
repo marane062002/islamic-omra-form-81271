@@ -173,14 +173,20 @@ export const Step1PersonalInfo: React.FC = () => {
                 id: 'phone',
                 required: true,
                 name: 'phone',
+                className: 'custom-phone-input'
               }}
+              containerClass="custom-phone-container"
+              buttonClass="custom-phone-button"
+              inputClass="custom-phone-input"
+              dropdownClass="custom-phone-dropdown"
+              searchClass="custom-phone-search"
               preferredCountries={['sa', 'ae', 'eg', 'ma', 'tn', 'dz', 'us', 'gb', 'fr', 'de']}
               enableSearch
               searchPlaceholder={isRTL ? 'ابحث عن الدولة...' : 'Search countries...'}
               countryCodeEditable={false}
               autoFormat={true}
               placeholder={isRTL ? 'ادخل رقم الهاتف' : 'Enter phone number'}
-              specialLabel="" // Remove special label to avoid conflicts
+              specialLabel=""
             />
           </div>
           <label htmlFor="phone" className="phone-floating-label">
@@ -214,7 +220,121 @@ export const Step1PersonalInfo: React.FC = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      {/* Add this to your global CSS file or CSS modules */}
+      <style jsx global>{`
+        /* Main container */
+        .custom-phone-container {
+          width: 100% !important;
+          font-family: inherit !important;
+        }
+
+        /* Input field - Underlined style */
+        .custom-phone-input {
+          width: 100% !important;
+          height: 56px !important;
+          padding: 16px 16px 16px 60px !important;
+          font-size: 16px !important;
+          line-height: 24px !important;
+          border: none !important;
+          border-bottom: 1px solid #d1d5db !important;
+          border-radius: 0 !important;
+          background: transparent !important;
+          transition: all 0.2s ease !important;
+          font-family: inherit !important;
+        }
+
+        /* Focus state */
+        .custom-phone-input:focus {
+          border-bottom-color: #16a34a !important;
+          box-shadow: none !important;
+          outline: none !important;
+        }
+
+        /* Country dropdown button */
+        .custom-phone-button {
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          bottom: 0 !important;
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 1px solid #d1d5db !important;
+          border-radius: 0 !important;
+          padding: 0 12px !important;
+          width: 52px !important;
+          height: 100% !important;
+        }
+
+        .custom-phone-button.open {
+          background: white !important;
+          border-bottom: 1px solid #16a34a !important;
+        }
+
+        .custom-phone-button:hover {
+          background-color: #f8fafc !important;
+        }
+
+        /* Country dropdown menu */
+        .custom-phone-dropdown {
+          border: 1px solid #e5e7eb !important;
+          border-radius: 8px !important;
+          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+          margin-top: 4px !important;
+          max-height: 300px !important;
+          overflow-y: auto !important;
+          background: white !important;
+        }
+
+        /* Search box */
+        .custom-phone-search {
+          padding: 12px !important;
+          border-bottom: 1px solid #e5e7eb !important;
+          margin: 0 !important;
+          border-radius: 8px 8px 0 0 !important;
+        }
+
+        .custom-phone-search input {
+          width: 100% !important;
+          padding: 8px 12px !important;
+          border: 1px solid #d1d5db !important;
+          border-radius: 6px !important;
+          outline: none !important;
+          transition: all 0.2s ease !important;
+          font-size: 14px !important;
+        }
+
+        .custom-phone-search input:focus {
+          border-color: #16a34a !important;
+          box-shadow: 0 0 0 3px rgb(22 163 74 / 0.1) !important;
+        }
+
+        /* Dial code arrow */
+        .custom-phone-button .arrow {
+          border-top-color: #6b7280 !important;
+          margin-left: 4px !important;
+        }
+
+        .custom-phone-button.open .arrow {
+          border-bottom-color: #16a34a !important;
+        }
+
+        /* RTL Support */
+        .rtl .custom-phone-input {
+          padding: 16px 60px 16px 16px !important;
+          text-align: right;
+        }
+
+        .rtl .custom-phone-button {
+          left: auto !important;
+          right: 0 !important;
+        }
+
+        .rtl .custom-phone-button .arrow {
+          margin-left: 0 !important;
+          margin-right: 4px !important;
+        }
+
+        /* Floating label styles */
         .form-input-floating-phone {
           position: relative;
           width: 100%;
@@ -233,172 +353,10 @@ export const Step1PersonalInfo: React.FC = () => {
           pointer-events: none;
         }
 
-        .phone-input-wrapper {
-          width: 100%;
+        .rtl .phone-floating-label {
+          left: auto;
+          right: 12px;
         }
-
-        /* Main container styling - Underlined style */
-        .phone-input-wrapper :global(.react-tel-input) {
-          width: 100% !important;
-          font-family: inherit;
-        }
-
-        /* Form field container - Underlined style */
-        .phone-input-wrapper :global(.react-tel-input .form-control) {
-          width: 100% !important;
-          height: 56px !important;
-          padding: 16px 16px 16px 60px !important;
-          font-size: 16px !important;
-          line-height: 24px !important;
-          border: none !important;
-          border-bottom: 1px solid #d1d5db !important;
-          border-radius: 0 !important;
-          background: transparent !important;
-          transition: all 0.2s ease !important;
-          font-family: inherit !important;
-        }
-
-        /* Focus state - Underlined style */
-        .phone-input-wrapper :global(.react-tel-input .form-control:focus) {
-          border-bottom-color: #16a34a !important;
-          box-shadow: none !important;
-          outline: none !important;
-        }
-
-        /* Country dropdown button */
-        .phone-input-wrapper :global(.react-tel-input .flag-dropdown) {
-          position: absolute !important;
-          top: 0 !important;
-          left: 0 !important;
-          bottom: 0 !important;
-          background: transparent !important;
-          border: none !important;
-          border-bottom: 1px solid #d1d5db !important;
-          border-radius: 0 !important;
-        }
-
-        .phone-input-wrapper :global(.react-tel-input .flag-dropdown.open) {
-          background: white !important;
-          border-bottom: 1px solid #16a34a !important;
-        }
-
-        /* Selected flag area */
-        .phone-input-wrapper :global(.react-tel-input .selected-flag) {
-          background: transparent !important;
-          padding: 0 12px !important;
-          width: 52px !important;
-          height: 100% !important;
-          border-radius: 0 !important;
-          transition: background-color 0.2s ease !important;
-        }
-
-        .phone-input-wrapper :global(.react-tel-input .selected-flag:hover) {
-          background-color: #f8fafc !important;
-        }
-
-        .phone-input-wrapper :global(.react-tel-input .selected-flag:focus) {
-          background-color: #f0fdf4 !important;
-        }
-
-        /* Country dropdown menu */
-        .phone-input-wrapper :global(.country-list) {
-          border: 1px solid #e5e7eb !important;
-          border-radius: 8px !important;
-          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
-          margin-top: 4px !important;
-          max-height: 300px !important;
-          overflow-y: auto !important;
-          background: white !important;
-        }
-
-        /* Individual country items */
-        .phone-input-wrapper :global(.country) {
-          padding: 8px 12px !important;
-          border-bottom: 1px solid #f3f4f6 !important;
-          font-size: 14px !important;
-          line-height: 20px !important;
-        }
-
-        .phone-input-wrapper :global(.country:hover) {
-          background-color: #f8fafc !important;
-        }
-
-        .phone-input-wrapper :global(.country.highlight) {
-          background-color: #f0fdf4 !important;
-          border-color: #16a34a !important;
-        }
-
-        /* Search box in dropdown */
-        .phone-input-wrapper :global(.search-box) {
-          padding: 12px !important;
-          border-bottom: 1px solid #e5e7eb !important;
-          margin: 0 !important;
-          border-radius: 8px 8px 0 0 !important;
-          font-size: 14px !important;
-        }
-
-        .phone-input-wrapper :global(.search-box input) {
-          width: 100% !important;
-          padding: 8px 12px !important;
-          border: 1px solid #d1d5db !important;
-          border-radius: 6px !important;
-          outline: none !important;
-          transition: all 0.2s ease !important;
-          font-size: 14px !important;
-        }
-
-        .phone-input-wrapper :global(.search-box input:focus) {
-          border-color: #16a34a !important;
-          box-shadow: 0 0 0 3px rgb(22 163 74 / 0.1) !important;
-        }
-
-        /* Dial code styling */
-        .phone-input-wrapper :global(.react-tel-input .selected-flag .arrow) {
-          border-top-color: #6b7280 !important;
-          margin-left: 4px !important;
-        }
-
-        .phone-input-wrapper :global(.react-tel-input .selected-flag.open .arrow) {
-          border-bottom-color: #16a34a !important;
-        }
-
-        /* RTL Support */
-        ${isRTL ? `
-          .phone-floating-label {
-            left: auto;
-            right: 12px;
-          }
-
-          .phone-input-wrapper :global(.react-tel-input .form-control) {
-            padding: 16px 60px 16px 16px !important;
-            text-align: right;
-          }
-
-          .phone-input-wrapper :global(.react-tel-input .flag-dropdown) {
-            left: auto !important;
-            right: 0 !important;
-            border-left: none !important;
-            border-right: none !important;
-            border-bottom: 1px solid #d1d5db !important;
-          }
-
-          .phone-input-wrapper :global(.react-tel-input .flag-dropdown.open) {
-            border-bottom: 1px solid #16a34a !important;
-          }
-
-          .phone-input-wrapper :global(.react-tel-input .selected-flag) {
-            border-radius: 0 !important;
-          }
-
-          .phone-input-wrapper :global(.country-list) {
-            text-align: right;
-          }
-
-          .phone-input-wrapper :global(.react-tel-input .selected-flag .arrow) {
-            margin-left: 0 !important;
-            margin-right: 4px !important;
-          }
-        ` : ''}
       `}</style>
     </div>
   );
