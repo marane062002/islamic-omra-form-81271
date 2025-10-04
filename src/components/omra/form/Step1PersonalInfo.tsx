@@ -112,7 +112,7 @@ export const Step1PersonalInfo: React.FC = () => {
             id="fullName"
             value={formData.fullName}
             onChange={(e) => handleInputChange('fullName', e.target.value)}
-            placeholder=" " // Important: Use space for floating label pattern
+            placeholder=" "
           />
           <label htmlFor="fullName">
             {t('form.fullname')} *
@@ -122,37 +122,35 @@ export const Step1PersonalInfo: React.FC = () => {
           )}
         </div>
 
-        {/* Email with Inline Autocomplete - FIXED */}
+        {/* Email with Inline Autocomplete - FIXED to match fullName input */}
         <div className="form-input-floating relative">
-          <div className="relative">
-            <input
-              ref={emailInputRef}
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={(e) => handleEmailChange(e.target.value)}
-              onKeyDown={handleEmailKeyDown}
-              onBlur={() => setTimeout(() => setShowSuggestion(false), 200)}
-              placeholder=" " // Important: Use space instead of actual placeholder text
-              className="bg-transparent relative z-10 w-full"
-            />
-            {showSuggestion && (
-              <div
-                ref={suggestionRef}
-                className="absolute top-0 left-0 w-full h-full text-gray-400 pointer-events-none z-0"
-                style={{ 
-                  background: 'transparent',
-                  border: 'none',
-                  outline: 'none'
-                }}
-              >
-                <span className="invisible">{formData.email}</span>
-                <span className="text-gray-400 absolute top-0 left-0">
-                  {suggestionText.slice(formData.email.length)}
-                </span>
-              </div>
-            )}
-          </div>
+          <input
+            ref={emailInputRef}
+            type="email"
+            id="email"
+            value={formData.email}
+            onChange={(e) => handleEmailChange(e.target.value)}
+            onKeyDown={handleEmailKeyDown}
+            onBlur={() => setTimeout(() => setShowSuggestion(false), 200)}
+            placeholder=" "
+            className="relative z-10"
+          />
+          {showSuggestion && (
+            <div
+              ref={suggestionRef}
+              className="absolute top-0 left-0 w-full h-full text-gray-400 pointer-events-none z-0"
+              style={{ 
+                background: 'transparent',
+                border: 'none',
+                outline: 'none'
+              }}
+            >
+              <span className="invisible">{formData.email}</span>
+              <span className="text-gray-400 absolute top-0 left-0">
+                {suggestionText.slice(formData.email.length)}
+              </span>
+            </div>
+          )}
           <label htmlFor="email">
             {t('form.email')} *
           </label>
@@ -226,6 +224,7 @@ export const Step1PersonalInfo: React.FC = () => {
         .form-input-floating {
           position: relative;
           width: 100%;
+          margin-bottom: 1rem;
         }
 
         .form-input-floating input {
@@ -258,7 +257,7 @@ export const Step1PersonalInfo: React.FC = () => {
           padding: 0 4px;
         }
 
-        /* Floating label effect */
+        /* Floating label effect - same as fullName input */
         .form-input-floating input:focus + label,
         .form-input-floating input:not(:placeholder-shown) + label {
           top: -8px;
@@ -270,6 +269,11 @@ export const Step1PersonalInfo: React.FC = () => {
         .rtl .form-input-floating label {
           left: auto;
           right: 16px;
+        }
+
+        /* Email input specific styles for autocomplete */
+        .form-input-floating .relative {
+          position: relative;
         }
 
         /* Main container */
